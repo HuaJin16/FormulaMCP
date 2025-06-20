@@ -1,4 +1,4 @@
-# ollama-mcp – Locally Hosted MCP Client with Ollama + LangChain
+# FormulaMCP - Local MCP Client using Ollama + LangGraph
 
 ### Create virtual environment
 
@@ -19,6 +19,11 @@ $ python.exe -m pip install --upgrade pip
 $ pip install -r requirements.txt
 ```
 
+### Install Formula
+```bash
+$ dotnet tool install --global VUISIS.Formula.<x64|ARM64> 
+```
+
 ### Ollama Setup
 ```bash
 # Download and install Ollama from https://ollama.com/
@@ -29,28 +34,19 @@ $ ollama run llama3.2
 ### Getting Started
 ```bash
 # Start the MCP server
-python server.py --server_type=sse
-
+python formula_server.py
+```
+```Bash
 # Run the client
-python langchain_client.py
+python formula_client.py
 ```
 
 ### Example Usage
-#### Add a record:
 ```txt
-# Prompt:
-"Add John Doe 30 year old Engineer"
+"You: load MappingExample.4ml"
 ```
-```sql
-# The agent will generate and run:
-INSERT INTO people (name, age, profession) VALUES ('John Doe', 30, 'Engineer')
-```
-#### View records:
 ```txt
-# Prompt:
-"Show all records"
-```
-```sql
-# The agent will return a formatted table from:
-SELECT * FROM people
+Expected Output:
+- Client prints the contents of MappingExample.4ml
+- Server responds with "(Compiled) MappingExample.4ml"
 ```
