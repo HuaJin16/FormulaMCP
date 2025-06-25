@@ -34,7 +34,8 @@ def run_command(cmd: str):
     sw.GetStringBuilder().Clear()
 
     if pr: 
-        print(output)
+        return output
+        print("OUTPUT", output)
 
 def load(file_path: str) -> str:
     run_command("$unload *")
@@ -46,8 +47,8 @@ def load(file_path: str) -> str:
             file_txt = f.read()
         finally:
             f.close()
-        run_command("load " + file_path)
-    return file_txt
+        output = run_command("load " + file_path)
+    return [file_txt, output]
 
 def query(model: str, goals: str):
     run_command("query " + model + " " + goals)

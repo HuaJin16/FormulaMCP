@@ -7,7 +7,7 @@ mcp = FastMCP("formula_mcp")
 def load_file(filename: str) -> str:
     """Returns the output of Loading a FORMULA model"""
     print(f"[TOOL DEBUG] load_file called with: {filename}")
-    return f.load(filename)
+    return [f.load(filename)]
 
 if __name__ == "__main__":
     print("🚀 Starting server...")
