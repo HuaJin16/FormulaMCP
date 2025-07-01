@@ -42,11 +42,4 @@ python formula_client.py
 ```
 
 ### Example Usage
-```txt
-"You: load MappingExample.4ml"
-```
-```txt
-Expected Output:
-- Client prints the contents of MappingExample.4ml
-- Server responds with "(Compiled) MappingExample.4ml"
-```
+Copy the contents in docs/inputs/SMM.txt and paste into the client
