@@ -1,0 +1,37 @@
+domain TenDigitNumber
+{
+  Index ::= { 0..9 }.
+  Digit ::= { 0..9 }.
+  
+  // Entry(0, 6) means there are 6 zeros in the number
+  Entry ::= new (index: Index, value: Digit).
+  Matches ::= new (index: Index).
+
+  // Matches(0) means that at position i, the value correctly states how many times digit i occurs in the number
+  Matches(i) :- Entry(i, v), c = count ({ e | e is Entry, e.value = i }), v = c.
+  
+  allMatch :- Matches(0), Matches(1), Matches(2), Matches(3), Matches(4),
+              Matches(5), Matches(6), Matches(7), Matches(8), Matches(9).
+  
+  // sumTen :- s = sum (0, { e.value | e is Entry }), s = 9.
+  sumTen :-
+    Entry(0, v0), Entry(1, v1), Entry(2, v2), Entry(3, v3), Entry(4, v4),
+    Entry(5, v5), Entry(6, v6), Entry(7, v7), Entry(8, v8), Entry(9, v9),
+    10 = v0 + v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9.
+
+  conforms allMatch, sumTen.
+}
+
+model m of TenDigitNumber
+{
+  Entry(0,6).
+  Entry(1,2).
+  Entry(2,1).
+  Entry(3,0).
+  Entry(4,0).
+  Entry(5,0).
+  Entry(6,1).
+  Entry(7,0).
+  Entry(8,0).
+  Entry(9,0).
+}

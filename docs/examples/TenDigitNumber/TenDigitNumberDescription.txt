@@ -1,0 +1,7 @@
+Description:
+Find a 10-digit number in which each digit describes how many times its own digit appears in the entire number.
+More precisely:
+- The number has exactly 10 digits, indexed from position 0 (leftmost) to position 9 (rightmost).
+- The digit in position i represents the total count of the digit i appearing anywhere in the number.
+- All digits must be between 0 and 9.
+- As a logical consequence, the sum of all the digits must equal 10 — because the number describes the counts for all ten possible digits, and there are exactly 10 digit slots.

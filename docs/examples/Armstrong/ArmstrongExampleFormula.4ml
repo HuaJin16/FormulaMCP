@@ -1,0 +1,12 @@
+domain Armstrong {
+  Armstrong ::= new (a: Integer, b: Integer, c: Integer).
+
+  goodValues :- gv is Armstrong, gv.a >= 1, gv.a <= 9, gv.b >= 0, gv.b <= 9, gv.c >= 0, gv.c <= 9. 
+  goodSolution :- gs is Armstrong, gs.a * 100 + gs.b * 10 + gs.c = gs.a * gs.a * gs.a + gs.b * gs.b * gs.b + gs.c * gs.c * gs.c.
+  
+  conforms goodValues, goodSolution.
+}
+
+partial model pm of Armstrong {
+  Armstrong(a, b, c).
+}

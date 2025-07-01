@@ -35,7 +35,6 @@ def run_command(cmd: str):
 
     if pr: 
         return output
-        print("OUTPUT", output)
 
 def load(file_path: str) -> str:
     run_command("$unload *")
@@ -48,7 +47,8 @@ def load(file_path: str) -> str:
         finally:
             f.close()
         output = run_command("load " + file_path)
-    return [file_txt, output]
+    print(file_txt)
+    return output
 
 def query(model: str, goals: str):
     run_command("query " + model + " " + goals)
