@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    int A, B, C;
+
+    for (A = 1; A <= 9; A++) {         // Hundreds place (cannot be 0)
+        for (B = 0; B <= 9; B++) {     // Tens place
+            for (C = 0; C <= 9; C++) { // Units place
+                int sumOfCubes = pow(A, 3) + pow(B, 3) + pow(C, 3);
+                int valueFromDigits = 100 * A + 10 * B + C;
+
+                if (sumOfCubes == valueFromDigits) {
+                    printf("%d%d%d\n", A, B, C);
+                }
+            }
+        }
+    }
+
+    return 0;
+}
