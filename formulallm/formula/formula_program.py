@@ -75,7 +75,7 @@ def exit():
     run_command("exit")
 
 def extract(id: str, n: str, output_name: str):
-    run_command("extract " + id + " " + n + " " + output_name)
+    return run_command("extract " + id + " " + n + " " + output_name)
 
 def generate(modname: str):
     run_command("generate " + modname)
@@ -120,7 +120,7 @@ def set(var: str, term: Optional[str] = None):
         run_command("set " + var + " " + term)
 
 def solve(partial_model: str, max_sols: str, goals: str):
-    run_command("solve " + partial_model + " " + max_sols + " " + goals)
+    return run_command("solve " + partial_model + " " + max_sols + " " + goals)
 
 def stats(taskid: str, rule: Optional[str] = None):
     if rule == None:

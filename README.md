@@ -31,15 +31,31 @@ $ dotnet tool install --global VUISIS.Formula.<x64|ARM64>
 $ ollama run llama3.2
 ```
 
-### Getting Started
+### Client Usage
 ```bash
 # Start the MCP server
-python formula_server.py
+$ python formula_server.py
 ```
-```Bash
+```bash
 # Run the client
-python formula_client.py
+$ python formula_client.py
+```
+```txt
+Copy the contents of docs/inputs/SMM.txt and paste them into the client
 ```
 
-### Example Usage
-Copy the contents in docs/inputs/SMM.txt and paste into the client
+### Repair Usage
+```bash
+# Start the MCP server
+$ python formula_server.py
+```
+```bash
+# Run the repair
+$ python formula_repair.py
+```
+```txt
+You: "load docs/conflicts/MappingExample.4ml"
+You: "solve docs/conflicts/MappingExample.4ml"
+You: "extract <task_id>"
+# Replace <task_id> with the Id returned from the solve command
+```
