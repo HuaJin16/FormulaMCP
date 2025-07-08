@@ -8,7 +8,7 @@ from langchain_ollama import ChatOllama
 from langgraph.prebuilt import ToolNode
 from langgraph.graph import StateGraph, END
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import AIMessage, BaseMessage, ToolCall
+from langchain_core.messages import AIMessage, BaseMessage, ToolCall, ToolMessage
 from langchain_core.messages.utils import count_tokens_approximately
 from typing_extensions import TypedDict
 from typing import List
@@ -35,56 +35,29 @@ class MCPRepair:
         print(f"Connecting to MCP server at {mcp_server_url}...")
         self.mcp_client = MultiServerMCPClient(server_config)
 
-        self.SYSTEM_PROMPT = """You are an assistant that can call FORMULA tools.
-        Only respond with a tool call when the user explicitly asks to **"load" a model file** and provides a filename (e.g., "docs/conflicts/MappingExample.4ml")
-        OR when the user explicity asks to **"solve" a model file** and provides provides a filename (e.g., "docs/conflicts/MappingExample.4ml")
-        OR when the user explicity asks to **"extract" a solution**" such as "extract 0".
-        Always use what the user types after "load" or "solve" or "extract" as the argument.
-        
-        When loading a model file, do not respond in natural language. Instead, return a JSON object in this format:
+        self.SYSTEM_TOOL_PROMPT = """You are an assistant that can call FORMULA tools.
+        When the user asks to **provide a solution for** a model file, you must perform ONLY one of these steps and in order:
+        - ONLY if the value of "previous_tool:" is empty, respond ONLY with a tool call named "load_file" with argument:
+          "filename" = the user-provided file path (e.g., "docs/conflicts/MappingExample.4ml").
+        - ONLY if "previous_tool" is "load_file", respond ONLY with a tool call named "solve_file" with argument:
+          "filename" = the same user-provided file path (e.g., "docs/conflicts/MappingExample.4ml").
+        - ONLY if "previous_tool" is "solve_file", you will receive its output as a "tool_result:": "content". 
+          Look at content to find a "solve task with Id <task_id>".
+          Then respond ONLY with a tool call named `"extract_solution"` with argument: `"id"` = the `"task_id"` you found.
+
+        For each step, respond ONLY with a JSON object in this format:
         {{
         "tool_calls": [
             {{
-                "name": "load_file",
-                "arguments": {{
-                    "filename": "<filename here>"
-                }}
+                "name": "load_file" | "solve_file" | "extract_solution",
+                "arguments": {{ ... }}
             }}
         ]
         }}
-        Do not include any explanation or text outside of this JSON.
-
-        When solving a model file, do not respond in natural language. Instead, return a JSON object in this format:
-        {{
-        "tool_calls": [
-            {{
-                "name": "solve_file",
-                "arguments": {{
-                    "filename": "<filename here>"
-                }}
-            }}
-        ]
-        }}
-        Do not include any explanation or text outside of this JSON.
-
-        When extracting a solution, do not respond in natural language. Instead, return a JSON object in this format:
-        {{
-        "tool_calls": [
-            {{
-                "name": "extract_solution",
-                "arguments": {{
-                    "id": "<task id>"
-                }}
-            }}
-        ]
-        }}
-        Do not include any explanation or text outside of this JSON.
-
-        If the user does **not** ask to "load" or "solve" a model file, or "extact" a solution, 
-        or if no input is provided, respond as a general-purpose language model.
-        Do not attempt to call any tools.
+        Do NOT include any explanation or text outside of this JSON.
+        If the user does NOT ask to "solve" a model file, or if no argument is provided, do NOT make any tool calls. 
         """
-        system_token_count = count_tokens_approximately(self.SYSTEM_PROMPT)
+        system_token_count = count_tokens_approximately(self.SYSTEM_TOOL_PROMPT)
         print(f"[DEBUG] Prompt tokens estimate: {system_token_count}")
     
     async def initialize_graph(self):
@@ -93,20 +66,43 @@ class MCPRepair:
         for tool in mcp_tools:
             print(f"[DEBUG] - {tool.name}: {tool.description}")
 
-        # defines what should happen when the graph visits the llm node
-        # accepts the current AgentState
-        def llm_node(state: AgentRepairState) -> AgentRepairState:
-            print("\n[DEBUG] Entering llm_node...")
-            prompt = ChatPromptTemplate.from_messages([
-                ("system", self.SYSTEM_PROMPT),
-                ("human", "{input}")
-            ])
-            # combines prompt and model into a single pipeline
-            chain = prompt | self.llm
+        # creates tool_calls for loading or solving a model, or extracting a task solution
+        def tool_planner_node(state: AgentRepairState) -> AgentRepairState:
+            print("\n[DEBUG] Entering tool_planner_node...")
+
+            # extract the last tool message for the solve command
+            last_tool_call = ""
+            last_tool_result = ""
+            if state["messages"] and isinstance(state["messages"][-1], ToolMessage):
+                last_tool_call = state["messages"][-1].name
+                print(f"[DEBUG] Last tool '{last_tool_call}'")
+                if last_tool_call == "solve_file":
+                    last_tool_result = state["messages"][-1].content
+
+            # construct human prompt
             input_text = state["input"]
-            print(f"[DEBUG] Sending prompt to LLM: {input_text}")
-            # LangChain's Runnable syntax - executes the pipeline with the given input 
-            result = chain.invoke({"input": input_text})
+            human_prompt = "\n".join([
+                "[USER PROMPT]",
+                input_text,
+                "",
+                "[PREVIOUS TOOL CALL]",
+                f"previous_tool = {last_tool_call}",
+                "",
+                "[PREVIOUS TOOL RESULT]",
+                f"tool_result = {last_tool_result}\n",
+            ])
+            print(f"[DEBUG] Human prompt:\n{human_prompt}")
+
+            # construct full prompt
+            prompt_parts = [
+                ("system", self.SYSTEM_TOOL_PROMPT),
+                ("human", "{input}")
+            ]
+            prompt = ChatPromptTemplate.from_messages(prompt_parts)
+            
+            # invoke llm
+            chain = prompt | self.llm
+            result = chain.invoke({"input": human_prompt})
             print("[DEBUG] Raw LLM response object:", result)
             response_tokens = count_tokens_approximately(result.content)
             print(f"[DEBUG] LLM response tokens estimate: {response_tokens}")
@@ -135,12 +131,12 @@ class MCPRepair:
                     AIMessage(
                         content="" if tool_calls else result.content,
                         additional_kwargs=getattr(result, "additional_kwargs", {}),
-                        tool_calls=tool_calls if tool_calls else None
+                        tool_calls=tool_calls if tool_calls else []
                     )
                 ]
             }
         
-        # returns the name of the next node to go to 
+        # invoke the tool if tool_calls is found, else END
         def should_call_tool(state: AgentRepairState) -> str:
             print("\n[DEBUG] Entering should_call_tool...")
             if not state["messages"]:
@@ -151,17 +147,28 @@ class MCPRepair:
                 return "tools"
             print("[DEBUG] No tool call found. Routing to END.")
             return END
+        
+        # loops back to tool planner until the execute tool call is made
+        def should_continue_tool_call(state: AgentRepairState) -> str:
+            print("\n[DEBUG] Entering should_continue_tool_call...")
+            if not state["messages"]:
+                return END
+            last_tool_message = state["messages"][-1]
+            if isinstance(last_tool_message, ToolMessage):
+                last_tool = last_tool_message.name
+                if last_tool == "load_file" or last_tool== "solve_file":
+                    print(f"[DEBUG] {last_tool} called. Routing to 'tool_planner' node...")
+                    return "tool_planner"
+            print("\n[DEBUG] Execute tool called. Routing to 'END'...")
+            return END
 
         graph = StateGraph(AgentRepairState)
-        graph.add_node("llm", llm_node)
-        # ToolNode is a prebuilt node that automatically reads tool_calls from AgentState["messages"],
-        # finds the matching MCP defined tool, and executes it with the given arguments.
-        # It then wraps the reutrn value of the tool call in a ToolMessage and adds it to AgentState["messages"]
+        graph.add_node("tool_planner", tool_planner_node)
         graph.add_node("tools", ToolNode(mcp_tools))
 
-        graph.set_entry_point("llm")
-        graph.add_conditional_edges("llm", should_call_tool)
-        graph.add_edge("tools", END)
+        graph.set_entry_point("tool_planner")
+        graph.add_conditional_edges("tool_planner", should_call_tool)
+        graph.add_conditional_edges("tools", should_continue_tool_call)
 
         print("[DEBUG] Compiling LangGraph...")
         self.app = graph.compile()
@@ -179,7 +186,6 @@ class MCPRepair:
 
             print("[DEBUG] Invoking agent with input:", user_input)
             state["input"] = user_input
-            # runs the full state graph - processes each node, follows graph logic, and returns the final AgentState
             result = await self.app.ainvoke(state)
             print("[DEBUG] Agent returned state:", result)
             last_message = result["messages"][-1]

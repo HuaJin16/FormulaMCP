@@ -54,8 +54,5 @@ $ python formula_server.py
 $ python formula_repair.py
 ```
 ```txt
-You: "load docs/conflicts/MappingExample.4ml"
-You: "solve docs/conflicts/MappingExample.4ml"
-You: "extract <task_id>"
-# Replace <task_id> with the Id returned from the solve command
+You: provide a solution for docs/conflicts/MappingExample.4ml
 ```
