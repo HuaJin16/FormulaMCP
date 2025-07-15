@@ -49,7 +49,7 @@ domain Money
 					more.e = money.e,
 					more.m != 0.
 
-  repeatDigit :- send is Send, send.s = send.e.
+	repeatDigit :- send is Send, send.s = send.e.
 
 	conforms goodSend, goodMore, goodMoney, goodSolution, repeatDigit.
 }
