@@ -16,7 +16,13 @@ from langchain_community.document_loaders import TextLoader
 from langchain_core.messages.utils import count_tokens_approximately
 from typing_extensions import TypedDict
 from typing import List, Dict
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.retrievers.document_compressors import LLMChainExtractor
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
 
+
+CONTEXT_LIMIT_TOKENS = 35000;   
 nest_asyncio.apply()
 
 # state - a way to maintain and track information as the llm flows through the LangGraph system 
@@ -28,13 +34,14 @@ class AgentState(TypedDict):
     iterations: int
     latest_model: str
 
-class MCPClient:
+class MCPClient:                                                                                       
     def __init__(self, mcp_server_url="http://127.0.0.1:8000"):
         # initialize ollama
         self.llm = ChatOllama(
             model="llama3.2",
             temperature=0.6,
-            streaming=False
+            streaming=False,
+            #num_ctx =9000
         )
         server_config = {
             "default": {
@@ -44,7 +51,55 @@ class MCPClient:
             }
         }
         print(f"Connecting to MCP server at {mcp_server_url}...")
-        self.mcp_client = MultiServerMCPClient(server_config)
+        self.mcp_client = MultiServerMCPClient(server_config)   
+
+        summary_path = "docs/formula_grammar_summary.txt"       
+
+        def load_and_escape_grammar(file_path: str) -> str:
+            with open(file_path, "r") as f:
+                content = f.read()
+            return content.replace("{", "{{").replace("}", "}}")
+
+        if os.path.exists(summary_path):
+            print("[DEBUG] Loading cached FORMULA grammar summary...")
+            with open(summary_path, "r") as f:
+                grammar_summary = f.read()
+        else:
+            print("[DEBUG] Grammar summary not found — generating from Manual.pdf...")
+
+        loader = PyMuPDFLoader("docs/Manual.pdf")
+        docs = loader.load()
+        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        chunks = splitter.split_documents(docs)
+
+        llm = ChatOllama(model="llama3.2", temperature=0.3)
+        compressor = LLMChainExtractor.from_llm(llm)
+        compressed_chunks = compressor.compress_documents(
+            chunks, 
+            query=""""
+            Extract a **technical cheat sheet** of the FORMULA programming language.
+            Focus only on:
+                - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+                - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+                - Nesting rules and what’s required inside each block.
+            DO NOT include historical background, tooling usage, or example explanations.
+        """
+        )
+
+        def escape_curly_braces(text: str) -> str:
+          return text.replace("{", "{{").replace("}", "}}")
+
+        grammar_summary = escape_curly_braces(
+             "\n".join([doc.page_content for doc in compressed_chunks])
+        )     
+        with open(summary_path, "w") as f:
+            f.write(grammar_summary)                        
+
+        safe_lexer = load_and_escape_grammar("docs/FormulaLexer.g4")
+        safe_parser = load_and_escape_grammar("docs/FormulaParser.g4")     
+
+        # Escape braces for f-string
+
 
         # Load FORUMLA Manual PDF for context
         # loader = PyMuPDFLoader(
@@ -65,6 +120,16 @@ class MCPClient:
                 "TenDigitNumberDescription.txt",
                 "TenDigitNumberC.txt",
                 "TenDigitNumberFormula.4ml"
+            ],
+            "SendMoreMoney": [
+                "SendMoreMoneyDescription",           # No file extension, fix if needed
+                "SendMoreMoney.c",
+                "SendMoreMoneyExample.4ml"
+            ],
+           "Ldp": [
+                "LdpDescription.txt",
+                "Ldp.c",
+                "ldp.4ml"
             ]
         }
         joined_examples = self.load_examples()
@@ -81,12 +146,34 @@ class MCPClient:
         - Begin with a `domain` block
         - Follow with a `model` or `partial model` block
         - Do NOT include any explanation, markdown, or comments
-        - Use examples below for **syntax patterns only**
+        - Use examples below for **syntax patterns only**   
+
+        [FORMULA GRAMMAR SUMMARY — Learn syntax from this only, do not repeat]
+        {grammar_summary}
+                                    
+        [LEXER GRAMMAR — Token definitions for FORMULA language]
+        {safe_lexer}
+
+        - Use this to understand which words are reserved keywords (e.g., `domain`, `model`, `ensures`, `new`, etc.)
+        - Learn how literals (e.g., numbers, strings, ranges like `0..9`) and identifiers (e.g., `V`, `Map.left`) must be written
+        - Avoid generating invalid tokens or unknown symbols
+
+        [PARSER GRAMMAR — Full syntax rules for FORMULA language]
+        {safe_parser}
+
+        - Use this to learn the structure of valid `.4ml` models
+        - Know what grammar rules must be followed for:
+            - `domain`, `model`, `transform`, `machine` blocks
+            - constraint logic using `no`, `ensures`, `requires`, `conforms`
+            - rule syntax using `:-`, function calls, comprehensions
+        - Use this as your guide for ordering, nesting, and completing code constructs correctly
+
 
         You are given example translation pairs below. Learn the mapping pattern from description and C logic to FORMULA constraints.
         [EXAMPLEs — FOR REFERENCE ONLY. DO NOT COPY]
         {joined_examples}
         """
+
         print(f"[DEBUG] SYSTEM PROMPT: ", self.FORMULA_GEN_SYSTEM_PROMPT)
         # use double curly so LangChain knows it isn't a variable that needs to be substittued
         self.SYSTEM_PROMPT = """You are an assistant that can call FORMULA tools.
@@ -131,10 +218,16 @@ class MCPClient:
         # creates and writes a FORMULA model 
         def FormulaGen_node(state: AgentState) -> AgentState:
             print("\n[DEBUG] Entering FormulaGen_node (generating formula model)...")
+            
+            def token_debug(name: str, content: str) -> int:
+                tokens = count_tokens_approximately(content)
+                print(f"[TOKENS] {name:<30}: {tokens:>5} tokens")
+                return tokens
 
-            previous_attempts = ""
-            for attempt in state["models_results"]:
-                previous_attempts += f"\n[PREVIOUS MODEL]\n{attempt['model']}\n\n[PREVIOUS RESULT]\n{attempt['result']}\n"
+            previous_attempts = "\n".join(
+                f"[PREVIOUS MODEL]\n{attempt['model']}\n\n[PREVIOUS RESULT]\n{attempt['result']}\n"
+                for attempt in state["models_results"]
+            )
 
             full_prompt = f"""
             Below is a string consisting of a C source code, a natural language description, and any previous attempts made
@@ -166,12 +259,28 @@ class MCPClient:
             ])
             chain = prompt | self.llm
 
-            print("[DEBUG] Sending FORMULA generation prompt to model...")
-            print(f"[DEBUG] PROMPT: {full_prompt}")
+
+
+             # Token usage breakdown
+            print("\n[TOKEN USAGE ANALYSIS]")
+            token_debug("System Prompt", self.FORMULA_GEN_SYSTEM_PROMPT)
+            token_debug("User Input (C + NL)", state["input"])
+            token_debug("Previous Attempts", previous_attempts)
+            total_tokens = token_debug("Full Prompt", full_prompt)
+
+            remaining_tokens = CONTEXT_LIMIT_TOKENS - total_tokens
+            if remaining_tokens < 0:
+                print(f"[WARNING] Full prompt exceeds context limit by {-remaining_tokens} tokens")
+            elif remaining_tokens < 500:
+                print(f"[CAUTION] You are near the context limit. Only {remaining_tokens} tokens left.")    
+    
+    
+            if total_tokens > CONTEXT_LIMIT_TOKENS:
+                print(f"[WARNING] Token count exceeds {CONTEXT_LIMIT_TOKENS} — prompt may be truncated!")
+
+            print("\n[DEBUG] Sending FORMULA generation prompt to model...")
             result = chain.invoke({"input": full_prompt})
-            token_count = count_tokens_approximately(full_prompt)
-            print("[DEBUG] Raw LLM response object:", result)
-            print(f"[TOKENS]: {token_count}")
+            print("[DEBUG] LLM Response:", result)
 
             return {
                 "input": state["input"],
@@ -274,7 +383,7 @@ class MCPClient:
 
             last_message = state["messages"][-1]
             tool_output = last_message.content if isinstance(last_message, ToolMessage) else ""
-            print(f"[DEBUG] Generated Model\n{state["latest_model"]}")
+            print(f"[DEBUG] Generated Model\n{state['latest_model']}")
             print(f"[DEBUG] Tool Result\n{tool_output}")
 
             models_results = state.get("models_results", [])
