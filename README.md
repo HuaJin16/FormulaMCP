@@ -54,5 +54,5 @@ $ python formula_server.py
 $ python formula_repair.py
 ```
 ```txt
-You: provide a solution for docs/conflicts/MappingExample.4ml
+You: generate a solution for docs/conflicts/MappingExample.4ml
 ```
