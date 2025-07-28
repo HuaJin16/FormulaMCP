@@ -11,15 +11,18 @@ from langgraph.prebuilt import ToolNode
 from langgraph.graph import StateGraph, END
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import AIMessage, BaseMessage, ToolCall, ToolMessage
-from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_community.document_loaders import TextLoader
 from langchain_core.messages.utils import count_tokens_approximately
+from marker.converters.pdf import PdfConverter
+from marker.models import create_model_dict
+from marker.output import text_from_rendered
+from marker.config.parser import ConfigParser
 from typing_extensions import TypedDict
 from typing import List, Dict
 
 nest_asyncio.apply()
 
-# state - a way to maintain and track information as the llm flows through the LangGraph system 
+# tracks shared context as the agent flows through the LangGraph graph
 class AgentState(TypedDict):
     input: str
     # LangGraph and ToolNode expects list of BaseMessage as "messages"
@@ -30,11 +33,17 @@ class AgentState(TypedDict):
 
 class MCPClient:
     def __init__(self, mcp_server_url="http://127.0.0.1:8000"):
-        # initialize ollama
-        self.llm = ChatOllama(
-            model="llama3.2",
+        self.tool_llm = ChatOllama(
+            model="llama3.1",
             temperature=0.6,
-            streaming=False
+            streaming=False,
+            num_ctx=16384
+        )
+        self.model_llm = ChatOllama(
+            model="qwen2.5-coder:7b",
+            temperature=0.6,
+            streaming=False,
+            num_ctx=45000
         )
         server_config = {
             "default": {
@@ -46,50 +55,83 @@ class MCPClient:
         print(f"Connecting to MCP server at {mcp_server_url}...")
         self.mcp_client = MultiServerMCPClient(server_config)
 
-        # Load FORUMLA Manual PDF for context
-        # loader = PyMuPDFLoader(
-        #     "docs/Manual.pdf", 
-        #     mode = "single"
-        # )
-        # manual_doc = loader.load()
-        # safe_manual = manual_doc[0].page_content.replace("{", "{{").replace("}", "}}")
+        # Load FORMULA Manual PDF for context
+        """
+        loader = PyMuPDFLoader(
+            "docs/formula/Manual.pdf", 
+            mode = "single"
+        )
+        manual_doc = loader.load()
+        safe_manual = manual_doc[0].page_content.replace("{", "{{").replace("}", "}}")
 
+        # parse chapters 1-3
+        config = {
+            "output_format": "markdown",
+            "page_range": "17-54"
+        }
+        config_parser = ConfigParser(config)
+
+        converter = PdfConverter(
+            config=config_parser.generate_config_dict(),
+            artifact_dict=create_model_dict()
+        )
+        rendered = converter("docs/formula/Manual.pdf")
+        text, _, _ = text_from_rendered(rendered)
+        safe_manual = text.replace("{", "{{").replace("}", "}}")
+        print(safe_manual)
+        manual_token_count = count_tokens_approximately(safe_manual)
+        print(f"[DEBUG] System prompt tokens estimate: {manual_token_count}")
+        """
+        
         # Load FORMULA examples from local files
+        """
+        "TenDigitNumber": [
+            "TenDigitNumberDescription.txt",
+            "TenDigitNumberC.txt",
+            "TenDigitNumberFormula.4ml"
+        ]
+        """
         self.examples = {
             "ArmStrong": [
                 "ArmStrongDescription.txt",
                 "ArmStrongExampleC.txt",
                 "ArmStrongExampleFormula.4ml"
             ],
-            "TenDigitNumber": [
-                "TenDigitNumberDescription.txt",
-                "TenDigitNumberC.txt",
-                "TenDigitNumberFormula.4ml"
-            ]
         }
         joined_examples = self.load_examples()
 
-        """
-        You are also given the FORMULA model. Learn the language's syntax and semantics
-        {safe_manual}
-        """
         self.FORMULA_GEN_SYSTEM_PROMPT = f"""\n
         You are a FORMULA code generator.
-        Your task is to convert a C source code **and** its natural language description into a valid `.4ml` FORMULA model.
+        Your goal is to translate user input from `[C SOURCE CODE + NATURAL LANGUAGE DESCRIPTION]` into a 
+        syntactially and semantically correct FORMULA `.4ml` model that represents the logic of the source code.
+        
+        If `[PREVIOUS RESULT]` contains errors or incorrect assumptions, your output **MUST** correct them.
 
-        You must follow strict formatting:
-        - Begin with a `domain` block
-        - Follow with a `model` or `partial model` block
-        - Do NOT include any explanation, markdown, or comments
-        - Use examples below for **syntax patterns only**
+        You are **required** to follow strict formatting rules below:
+        1. Begin with a `domain` block
+            - Define data constructors using `"name" ::= new (...).` syntax.
+            - Define rules (constraint) using `"name" :- ... .` syntax.
+            - Include a single `conforms` clause that listing all rules defined.
+        2. Follow with a `partial model` block:
+            - Instantiate each constructor used and assign variables to all of their arguments. 
+            - Ensure variable naming is consistent and shared across all parts of the model.
 
-        You are given example translation pairs below. Learn the mapping pattern from description and C logic to FORMULA constraints.
-        [EXAMPLEs — FOR REFERENCE ONLY. DO NOT COPY]
+        [OUTPUT INSTRUCTIONS]
+        1. Output **ONLY** valid FORMULA `.4ml` code — do **NOT** include explanations, markdown, or comments.
+        2. Avoid using example code or placeholders. Every line must serve a functional purpose in the model.
+        3. Ensure your output compiles and respects the FORMULA formatting rules defined above. 
+
+        [REFERENCE EXAMPLES]
+        Use the example translation pairs below to learn **patterns** of abstraction and constraint formulation from C code and natural language
+        into FORMULA models.
         {joined_examples}
         """
         print(f"[DEBUG] SYSTEM PROMPT: ", self.FORMULA_GEN_SYSTEM_PROMPT)
+        formula_gen_token_count = count_tokens_approximately(self.FORMULA_GEN_SYSTEM_PROMPT)
+        print(f"[DEBUG] Formula_Gen prompt tokens estimate: {formula_gen_token_count}")
+        
         # use double curly so LangChain knows it isn't a variable that needs to be substittued
-        self.SYSTEM_PROMPT = """You are an assistant that can call FORMULA tools.
+        self.SYSTEM_TOOL_PROMPT = """You are an assistant that can call FORMULA tools.
         Only respond with a tool call when the user explicitly asks to **"load" a model file** and provides a filename (e.g., "docs/examples/MappingExample.4ml").
         When loading a model file, do not respond in natural language. Instead, return a JSON object in this format:
         {{
@@ -107,8 +149,10 @@ class MCPClient:
         If the user does **not** ask to "load" a model file, or if no filename is given, respond normally as a general-purpose language model.
         Do not attempt to call any tools.
         """
+        system_token_count = count_tokens_approximately(self.SYSTEM_TOOL_PROMPT)
+        print(f"[DEBUG] System prompt tokens estimate: {system_token_count}")
 
-    # load C & Natural Language Description -> FORMULA model examples and format for system prompt
+    # loads reference translation examples and formats them for the FORMULA_GEN_SYSTEM_PROMPT
     def load_examples(self) -> str:
         example_texts = []
         for example_name, files in self.examples.items():
@@ -128,50 +172,38 @@ class MCPClient:
         for tool in mcp_tools:
             print(f"[DEBUG] - {tool.name}: {tool.description}")
         
-        # creates and writes a FORMULA model 
+        # generates a FORMULA model from C code and natural language description
         def FormulaGen_node(state: AgentState) -> AgentState:
             print("\n[DEBUG] Entering FormulaGen_node (generating formula model)...")
 
+            # incorporate previous models and their errors into the human prompt
             previous_attempts = ""
             for attempt in state["models_results"]:
                 previous_attempts += f"\n[PREVIOUS MODEL]\n{attempt['model']}\n\n[PREVIOUS RESULT]\n{attempt['result']}\n"
 
-            full_prompt = f"""
-            Below is a string consisting of a C source code, a natural language description, and any previous attempts made
-            at generating a FORMULA model.
-
+            human_prompt = f"""
             [C SOURCE CODE + NATURAL LANGUAGE DESCRIPTION]\n
             {state["input"]}\n
-
             [PREVIOUS ATTEMPTS]
             {previous_attempts}\n
-
-            [YOUR TASK]
-            Write a valid FORMULA `.4ml` model that reflects the logic of the user provided C source code and description.
-            Ensure that any errors identified in earlier versions are corrected.
-
-            [FORMULA MODEL REQUIREMENTS]
-            - Start with a `domain` block that defines relevant types, constructs, and constraints
-            - Include a `model` or `partial model` block
-
-            [RESPONSE RULES]
-            - Return only valid FORMULA code
-            - Do not include explanations, comments, markdown, or example code
             """
+            print(f"[DEBUG] Human prompt:\n{human_prompt}")
+            human_token_count = count_tokens_approximately(human_prompt)
+            print(f"[DEBUG] Human prompt tokens estimate: {human_token_count}")
 
             # creates a prompt template and composes it in a single pipeline with the LLM
             prompt = ChatPromptTemplate.from_messages([
                 ("system", self.FORMULA_GEN_SYSTEM_PROMPT),
                 ("human", "{input}")
             ])
-            chain = prompt | self.llm
+            chain = prompt | self.model_llm
 
             print("[DEBUG] Sending FORMULA generation prompt to model...")
-            print(f"[DEBUG] PROMPT: {full_prompt}")
-            result = chain.invoke({"input": full_prompt})
-            token_count = count_tokens_approximately(full_prompt)
+            print(f"[DEBUG] PROMPT: {human_prompt}")
+            result = chain.invoke({"input": human_prompt})
             print("[DEBUG] Raw LLM response object:", result)
-            print(f"[TOKENS]: {token_count}")
+            response_tokens = count_tokens_approximately(result.content)
+            print(f"[DEBUG] LLM response tokens estimate: {response_tokens}")
 
             return {
                 "input": state["input"],
@@ -183,7 +215,7 @@ class MCPClient:
                 "latest_model": state["latest_model"] 
             }
         
-        # write the generated model to disk, generates tool call for "load"
+        # saves the generated model to disk and generates a tool_call for "load" command
         def model_loader_node(state: AgentState) -> AgentState:
             print("\n[DEBUG] Entering model_loader_node...")
             input_text = ""
@@ -210,11 +242,11 @@ class MCPClient:
                         latest_model = model
 
             prompt = ChatPromptTemplate.from_messages([
-                ("system", self.SYSTEM_PROMPT),
+                ("system", self.SYSTEM_TOOL_PROMPT),
                 ("human", "{input}")
             ])
             # combines prompt and model into a single pipeline
-            chain = prompt | self.llm
+            chain = prompt | self.tool_llm
             print(f"[DEBUG] Sending prompt to LLM: {input_text}")
             # LangChain's Runnable syntax - executes the pipeline with the given input 
             result = chain.invoke({"input": input_text})
@@ -256,7 +288,7 @@ class MCPClient:
                 "latest_model": latest_model
             }
 
-        # returns the name of the next node to go to 
+        # routes to 'tools' if the last message contains a tool call; otherwise, ends execution
         def should_call_tool(state: AgentState) -> str:
             print("\n[DEBUG] Entering should_call_tool...")
             if not state["messages"]:
@@ -268,13 +300,13 @@ class MCPClient:
             print("[DEBUG] No tool call found. Routing to END.")
             return END
         
-        # adds the results of loading the generated model to AgentState
+        # records the result of the tool call and updates model history in AgentState
         def load_result_node(state: AgentState) -> AgentState:
             print("\n[DEBUG] Entering load_result_node...")
 
             last_message = state["messages"][-1]
             tool_output = last_message.content if isinstance(last_message, ToolMessage) else ""
-            print(f"[DEBUG] Generated Model\n{state["latest_model"]}")
+            print(f"[DEBUG] Generated Model\n{state['latest_model']}")
             print(f"[DEBUG] Tool Result\n{tool_output}")
 
             models_results = state.get("models_results", [])
@@ -292,7 +324,7 @@ class MCPClient:
                 "latest_model": state["latest_model"]
             }
         
-        # determines if the LLM need to attempt creating the model again
+        # determines whether to retry FORMULA model generation based on "load" tool feedback
         def should_attempt_again(state: AgentState) -> str:
             print("\n[DEBUG] Entering should_attempt_again_node...")
             if state.get("iterations", 0) >= 2:
