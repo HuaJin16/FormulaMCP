@@ -120,6 +120,7 @@ class MCPClient:
         1. Output **ONLY** valid FORMULA `.4ml` code — do **NOT** include explanations, markdown, or comments.
         2. Avoid using example code or placeholders. Every line must serve a functional purpose in the model.
         3. Ensure your output compiles and respects the FORMULA formatting rules defined above. 
+        4. Do **NOT** wrap the ouptput in backticks, markdown formatting, or code blocks of any kind.
 
         [REFERENCE EXAMPLES]
         Use the example translation pairs below to learn **patterns** of abstraction and constraint formulation from C code and natural language
@@ -198,8 +199,6 @@ class MCPClient:
             ])
             chain = prompt | self.model_llm
 
-            print("[DEBUG] Sending FORMULA generation prompt to model...")
-            print(f"[DEBUG] PROMPT: {human_prompt}")
             result = chain.invoke({"input": human_prompt})
             print("[DEBUG] Raw LLM response object:", result)
             response_tokens = count_tokens_approximately(result.content)
@@ -327,17 +326,22 @@ class MCPClient:
         # determines whether to retry FORMULA model generation based on "load" tool feedback
         def should_attempt_again(state: AgentState) -> str:
             print("\n[DEBUG] Entering should_attempt_again_node...")
-            if state.get("iterations", 0) >= 2:
-                print("[DEBUG] Max iterations reached")
+
+            last_model_result = state["models_results"][-1]
+            result = last_model_result["result"]
+            print(f"[DEBUG] {result}")
+            if "(Compiled)" in result:
+                print("[DEBUG] Model compiled successfully. Ending.")
                 return END
         
-            last_model_result = state["models_results"][-1]
-            print(f"[DEBUG] {last_model_result}")
             if "Error" in last_model_result["result"]:
+                if state.get("iterations", 0) >= 1:
+                    print("[DEBUG] Max iterations reached")
+                    return END
                 print("[DEBUG] Retrying FORMULA generation.")
                 return "FormulaGen"
             
-            print("[DEBUG] No syntax error, done.")
+            print("[DEBUG] No syntax errors found. Ending.")
             return END
 
         graph = StateGraph(AgentState)
@@ -397,7 +401,10 @@ class MCPClient:
             result = await self.app.ainvoke(state)
             print("\n[DEBUG] Agent returned state:", result)
             last_message = result["messages"][-1]
-            print(f"""\n[Agent Output]:\n----- MODEL -----{state['latest_model']}---- RESULT -----{last_message.content}------------------""")
+            print(
+                f"\n[Agent Output]:\n-------- MODEL --------\n{result['latest_model']}\n"
+                f"-------- RESULT --------\n{last_message.content}\n{'-' * 23}\n"
+            )
         self.cleanup_generated_models()
 
 async def main():
