@@ -30,8 +30,9 @@ class MCPRepair:
             num_ctx=16384
         )
         self.repair_llm = ChatOllama(
-            # yi-coder:latest, deepseek-coder-v2:latest
-            model="qwen2.5-coder:7b",
+            # qwen2.5-coder:7b performs better for SendMoreMoney.4ml
+            # yi-coder:latest performs better for MappingExample.4ml
+            model="yi-coder:latest",
             temperature=0.6,
             streaming=False,
             num_ctx=50000
@@ -210,7 +211,7 @@ class MCPRepair:
                 "[PREVIOUS TOOL CALL]",
                 f"previous_tool = {last_tool_call}",
                 "[PREVIOUS TOOL RESULT]",
-                f"tool_result = {last_tool_result}\n",
+                f"tool_result = {last_tool_result}",
             ])
             print(f"[DEBUG] Human prompt:\n{human_prompt}")
             human_token_count = count_tokens_approximately(human_prompt)
@@ -354,7 +355,7 @@ class MCPRepair:
             model_path = os.path.join(output_dir, filename)
             with open(model_path, "w") as f:
                 f.write(model_code)
-            print(f"[DEBUG] Saved reapired FORMULA model to: {model_path}")
+            print(f"[DEBUG] Saved repaired FORMULA model to: {model_path}")
             
             return {
                 "input": f"generate a solution for {model_path.replace("\\", "/")}",
