@@ -1,833 +1,1107 @@
-new
-ensures
-no
-conforms
-:-
+The extracted relevant part of the context is:
+
+>>>
+# FORMULA 2.0
+
+# FORMULA 2.0
+
+for
+
+# Formal Specifications and Analyses
+
+# User Guide
+
+# Ethan K. Jackson and Wolfram Schulte
+
+Microsoft Research, Redmond WA
+
+research.microsoft.com/formula
+
+![](_page_2_Picture_7.jpeg)
+
+ copyrighted material
 NO_OUTPUT.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-*domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint* blocks. 
-Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-Nesting rules and what’s required inside each block.
-*domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint* blocks.
-Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-Nesting rules and what’s required inside each block.
-NO_OUTPUT.
-No output.
 NO_OUTPUT.
 The extracted relevant part of the context is:
 
-Note that TRUE and FALSE are automatically deﬁned on the user’s behalf, though they are
-not keywords.
+| 2 | Domains and Models<br>2.1<br>Querying Models<br>2.2<br>Model Conformance<br>2.3<br>Relational Constraints.<br>.<br>2.4<br>Finite Functions.<br>.                                                                                          | 13<br>14<br>17<br>18<br>19
+The extracted relevant part of the context is:
 
-By convention, the names of user-deﬁned constants should consist of all uppercase
-characters and be at least two characters long. This convention helps to distinguish con-
-stants from other identiﬁers. Two user-deﬁned constants denote the same value are if and
-only if they have the same. For example:
-TRUE = TRUE, FALSE = FALSE, TRUE != FALSE, RED != BLUE
-> Context:
->>
-1.2. DATA CONSTRUCTORS
-5
-Multi-Line String Escapes#
-Syntax
-Result#
-' ' " "
-Produces the sequence ' " .
-" " ' '
-Produces the sequence " ' .
-Table 1.2: Table of multi-line string escapes.
-1.2
-DATA CONSTRUCTORS
-Complex data values are created by functions called data constructors (or constructors for
-short). An n-ary data constructor f takes n data values as arguments and returns a new
-data value. Here are some examples:
-Person("John", "Smith"), Node(1, Node(2, NIL, NIL), Node(3, NIL, NIL))
-The Person(,) constructor creates Person values from two string arguments. The Node(,,)
-constructor builds binary trees of integer keys. The arguments to Node are: (1) an integer
-key, (2) a left-subtree (or the constant NIL if none) and (3) a right-subtree (or the constant
-NIL if none).
-Data constructors are proper functions, i.e. they always produce the same values from
-the same inputs.
-> Context:
-1: class Node {{
-2:
-...
-3:
-Node (int Key, Node left, Node right)
-4:
-{{ ... }}
-5: }}
-6:
-7: Node x = new Node(1, null, null);
-8: Node y = new Node(1, null, null);
-9: if (x != y) {{
-10:
-print("Different");
-11: }}
+>>>
+|              | 3.6                                | General Rules and Rule Heads<br>.                | 35       |  |  |
+|              | 3.7                                | Stratification and Termination                   | 36       |  |  |
+|              | 3.8                                | Complex Conformance Constraints<br>.             | 39       |  |  |
+|              | 4            | Domain and Model Composition<br>43 |                                                  |          |  |
+>>>
+
+This part of the context appears to be related to the FORMULA programming language, specifically sections that cover general rules and rule heads, stratification and termination, complex conformance constraints, and domain and model composition.
+> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+> Nesting rules and what’s required inside each block.
 NO_OUTPUT.
+NO_OUTPUT.
+The extracted part of the context that is relevant to answer the question is:
+
+| Single-Line String Escapes# |                                                             |  |
+|-----------------------------|-------------------------------------------------------------|--|
+| Syntax                      | Result#                                                     |  |
+|                             |                                                             |  |
+| \n                          | Produces a line feed.                                       |  |
+| \r                          | Produces a carriage return.                                 |  |
+| \t                          | Produces a tab.                                             |  |
+| \x                          | x ∉<br>Produces<br>x for<br>{{n,r,t}}, e.g.<br>\\<br>or<br>" |  |
+
+Table 1.1: Table of single-line string escapes.
 > Context:
 >>>
-A data type (or just a type) is a expression standing for a set of values. Table 1.3 lists the
-built-in data types and their meanings. In addition, other types can be deﬁned. Suppose
-f (...) is an n-ary constructor, then the type f stands for the range of the constructor f .
+Person("John", "Smith"), Node(1, Node(2, NIL, NIL), Node(3, NIL, NIL))
+
+Data constructors are proper functions, i.e. they always produce the same values from the same inputs.
+> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> 
+> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+> 
+> Nesting rules and what’s required inside each block.
+> Context:
+>>>
+Node(1, Node(10, NIL, NIL), NIL) < Node(2, NIL, NIL), Node(2, NIL, NIL) < Person("John", "Smith")
+
+#### <span id="page-19-1"></span>1.4 DATA TYPES AND SUBTYPING
+
+A *data type* (or just a *type*) is a expression standing for a set of values. Table [1.3](#page-20-0) lists the built-in data types and their meanings. In addition, other types can be defined. Suppose *f* (...) is an *n*-ary constructor, then the type *f* stands for the range of the constructor *f*.
+*domain*, *model*, *transform*, *machine*, *rule*, *type*, and *constraint* blocks.
+Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+Nesting rules and what’s required inside each block.
+> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> 
+> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+> 
+> Nesting rules and what’s required inside each block.
+> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+ 
+> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+
+> Nesting rules and what’s required inside each block.
 The extracted relevant part of the context is:
 
-Built-in Data Types#
-Name
-Meaning#
-Real
-The set of all numeric values.
-Integer
-The set of all integers.
-Natural
-The set of all non-negative integers.
-PosInteger
-The set of all positive integers.
-NegInteger
-The set of all negative integers.
-String
-The set of all string integers.
-Boolean
-The set of constants TRUE and FALSE.
+{{ 0..10 }} + Natural = Natural = {{0}} + PosInteger
+
+Node(Integer, Node + {{ NIL}}, Node + {{ NIL}}) = Node
+* The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+* Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+* Nesting rules and what’s required inside each block.
+The extracted relevant part of the context is:
+
+```
+TypeName ::= TypeExpr.
+ConstructorName ::= (Arg1_TypeExpr, ..., ArgN_TypeExpr).
+```
+domain {{ 
+  - structure:
+    - `Id ::= Integer.`
+    - `Id ::= String.`
+- nesting rules:
+  - `domain` block can contain other blocks (not specified in this example)
+- grammar keywords and their valid use:
+  - `new`: not mentioned
+  - `ensures`: not mentioned
+  - `no`: not mentioned
+  - `conforms`: not mentioned
+  - `:-`: not mentioned
+*   The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+*   Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+*   Nesting rules and what’s required inside each block.
+* The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+* Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+* Nesting rules and what’s required inside each block.
+# Structure of Blocks
+### domain
+- The structure is `domain <name> = {{ <constructor1> | <constructor2> ... }}`
+
+### model
+- Not mentioned in the provided context.
+
+### transform
+- Not mentioned in the provided context.
+
+### machine
+- Not mentioned in the provided context.
+
+### rule
+- Not mentioned in the provided context.
+
+### type
+- Not mentioned in the provided context.
+
+### constraint
+- Not mentioned in the provided context.
+
+# Grammar Keywords and Valid Use
+### new
+- Used to introduce a new constructor.
+
+### ensures
+- Not mentioned in the provided context.
+
+### no
+- Not mentioned in the provided context.
+
+### conforms
+- Not mentioned in the provided context.
+
+### :-
+- Used for defining constructors, e.g. `NamedColor ::= (String).`
+
+# Nesting Rules
+- Each block must be enclosed within curly brackets `{{}}`.
+- Constructors are separated by a vertical bar `|`.
+- Argument types are enclosed within parentheses `()`.
+> NamedColor("RED"), NamedColor("GREEN"), NamedColor("BLUE")
+
+It is illegal to apply the *N amedCol or* color constructor to values other than strings. Also the corresponding *N amedCol or* type is automatically defined and only contains those values that obey argument types. The *RGBCol or* constructor (line [4\)](#page-23-3) takes three arguments for the red, green, and blue components.
+
+> 
+> The *Col or* type is a union of the possible color values.
+> Every constructor creates distinct values.
 > The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> 
 > Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+> 
 > Nesting rules and what’s required inside each block.
+> 
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+> Context:
+>>
+1: domain Trees
+2: {{
+3: Node ::= (key : Integer,
+4: left : Node + {{NIL}},
+5: right: Node + {{NIL}}).
+6:
+7: Node ::= (key: Integer, left: Tree, right: Tree).
+8: Tree ::= Node + {{NIL}}.
+9: }}
+ 
+# <span id="page-26-0"></span>CHAPTER
+
+**2**
+
+# **Domains and Models**
+- The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+- Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+- Nesting rules and what’s required inside each block.
+*   The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+*   Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+*   Nesting rules and what’s required inside each block.
+> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> 
+> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+> 
+> Nesting rules and what’s required inside each block.
+NO_OUTPUT.
+> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> 
+> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+> 
+> Nesting rules and what’s required inside each block.
+*domain*, *model*, *transform*, *machine*, *rule*, *type*, and *constraint* blocks.
+Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+Nesting rules and what’s required inside each block.
+[]>
+
+query Gex E(x, y), E(y, z)
+
+[]> query Gex E(_, y), E(y, _)
+
+[]> query Gex V(x), x > 20
+
+[]> query Gex e is E, e.src.lbl > 100
+- The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+- Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+- Nesting rules and what’s required inside each block.
+> Context:
+>>
+A model *M conforms* to a domain *D* if the following properties are satisfied:
+
+- P1. Every assertion in *M* is constructed from *new-kind* constructors.
+- P2. Every constructor application in *M* obeys the type declarations in *D*.
+- P3. The operation query M D.conforms evaluates to true.
+
+P1-P2 are checked whenever a model is compiled; any violation causes a compile-time error; P3 is checked upon request. A *new-kind* constructor is a constructor marked with the modifier *new*. Recall that both *V* and *E* constructors were marked with this modifier.
+
+```
+1: V ::= new (lbl: Integer).
+2: E ::= new (src: V, dst: V).
+```
+The extracted relevant part of the context is:
+
+```
+P3 allows domains to place fine-grained constraints on the conformance relationship. Unlike the first two properties, satisfying P3 can be difficult and evaluating its satisfaction can be expensive. For these reasons, FORMULA only checks P3 upon request and failure of this property is not an error.
+```
+# FORMULA programming language technical cheat sheet
+
+## Structure of blocks
+
+- `domain`: Not mentioned in the context.
+- `model`: Contains a set of vertices `V` and edges `E`, with constraints on their structure.
+  - Example:
+    ```
+    V(1).
+    E(V(1), V(2)).
+    ```
+
+- `transform`: Not mentioned in the context.
+
+- `machine`: Not mentioned in the context.
+
+- `rule`: Not mentioned in the context.
+
+- `type`: Not mentioned in the context.
+
+- `constraint`: Contains constraints on the structure of models, such as:
+  - `E` ⊆ `V` × `V`
+  - Definition of `V`
+
+## Grammar keywords
+
+- `new`: Not mentioned in the context.
+- `ensures`: Not mentioned in the context.
+- `no`: Not mentioned in the context.
+- `conforms`: Not mentioned in the context.
+- `:-`: Not mentioned in the context.
+
+## Nesting rules
+
+- The nesting rule for blocks is not explicitly stated in the context.
+The extracted relevant part of the context is:
+
+```
+>>>
+1: model SomeVertices of IntGraphs
+2: {{
+3: V(1).
+4: E(V(1), V(2)).
+5: }}
+```
+> Context:
+>>>
+[]> reload ex1.4ml
+
+Evaluate the query again to observe that it evaluates to true.
+
+## 2.4. FINITE FUNCTIONS. 19
+
+**Definition 2.3.1** (Relational Constraint)**.** The constructor *R* is relational on constructor *S* in position *i* if the constructor *R* is declared as:
+
+```
+R ::= new (..., arg_i: T_i, ...).
+```
+
+and *S* is a subtype of *T<sup>i</sup>* . The relational constraint means that for every provable value *t* containing *R*(...,*t<sup>i</sup>* ,...) and *t<sup>i</sup>* = *S*(...) then *t<sup>i</sup>* must also be provable.
+
+Some type declarations are not intended to encode finite relations, and the default behavior would produce strange results.
+> Node ::= new (left: Node + {{NIL}}, right: Node + {{NIL}}).
+
+This declaration fits the pattern for relational constraints and the generated constraints are satisfiable. However, it assumes the user intended to encode a relation with the following strange property:
+
+*Node* ⊆ *Node* × *Node*.
+> Node ::= new (left: any Node + {{NIL}}, right: any Node + {{NIL}}).
+> 
+> finite functions are a special case of finite relations satisfying additional constraints.
+> 
+> *F de f* = (*V*,*par ent*) where *par ent* : *V* → {{>}}∪({{*L*,*R*}}×*V* ).
+> 
+> new
+> ensures
+> no
+> conforms
+The extracted relevant part of the context is:
+
+*F de f* = (*V*,*par ent*) where *par ent* : *V* → {{>}}∪({{*L*,*R*}}×*V* ).
+
+and 
+
+$$
+F_{{ex}} \stackrel{{def}}{{=}} (\{{1,2,3\}}, \{{(1,\top), (2,(L,1)), (3,(R,1))\}}).
+$$
+* The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+* Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+* Nesting rules and what’s required inside each block.
+
+NO_OUTPUT.
+*domain*, 
+*model*, 
+*transform*, 
+*machine*, 
+*rule*, 
+*type*, 
+*constraint*
+ 
+new, 
+ensures, 
+no, 
+conforms, 
+:-
+> Parent ::= fun (chld: any V => cxt: any {{ROOT}} + Context).
+
+The *any* modifier applied to the first argument means there must be a provable *Parent*(*V* (*x*), *y*) value for every well-typed value *V* (*x*). This implies an infinite number of provable values, which is not permitted.
+
+> V ::= fun (lbl: Integer -> prettyName: String).
+
+Grammar keywords and their valid use:
+- `new`
+- `ensures`
+- `no`
+- `conforms`
+- `:-`
+> V ::= fun (lbl: Integer -> prettyName: String).
+
+Every vertex must have a unique pretty name, but there does not need to be a vertex defined for every integer.
+
+#### <span id="page-34-0"></span>2.5 RECURSIVE TYPES, ALIASES, AND SYMBOLIC CONSTANTS
+
+Example [2.3](#page-33-0) showed a partial specification of binary trees using a representation inspired by finite relations.
+> # <span id="page-34-1"></span>Example 2.4 (Algebraic Trees).
+
+```
+1: domain AlgTrees
+2: {{
+3: Node ::= new (left: any Node + {{NIL}},
+4: right: any Node + {{NIL}}).
+5: Root ::= new (root: any Node).
+6: }}
+7:
+8: model Fex' of AlgTrees
+9: {{
+10: Root(
+11: Node(
+12: Node(NIL, NIL),
+13: Node(NIL, NIL))).
+14: }}
+```
+
+> # <span id="page-34-4"></span><span id="page-34-3"></span><span id="page-34-2"></span>Example [2.4](#page-34-1) shows an algebraic representation of trees using data constructors. Notice that the entire tree is a single value (line [10\)](#page-34-2). The *Root*() constructor is used to mark some
+The extracted relevant part of the context is:
+
+|R ::=<br>new<br>(,<br>T_i<br>, ).          | Relational constraint:<br>If<br>S is a constructor,<br>S <:<br>T1,<br>,) occurs in a provable value,<br>R(,ti<br>=                               |
+|R ::=<br>new<br>(,<br>any<br>T_i, ).       | and<br>S(), then<br>must be provable.<br>ti<br>ti<br>Occurrences of<br>R are exempt from the rela<br>tional constraint in position<br>i.
+> Extract a **technical cheat sheet** of the FORMULA programming language.
+> 
+> Focus only on:
+>     - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+>     - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+>     - Nesting rules and what’s required inside each block.
+> 
+> DO NOT include historical background, tooling usage, or example explanations.
+
+>>>
+| R ::=<br>fun<br>(, D_m<br>-><br>,<br>C_n). | Partial function: Same as<br>new. Additionally,<br>the set of provable R values must form a par<br>D1××Dm<br>C1××Cn.<br>tial function from<br>to |
+| R ::=<br>fun<br>(, D_m<br>=><br>,<br>C_n). | Total function: Same as partial function, but<br>D1××Dm; totality is mod<br>must be total on<br>ified by<br>any.                                 |
+| R ::=<br>inj<br>(, D_m<br>-><br>,<br>C_n). | Partial injection:<br>Same as partial function;<br>additionally if<br>R(~x,~z) and<br>R(~y,~z) are provable<br>~x =<br>then<br>~y.               |
+| R ::=<br>inj<br>(, D_m<br>=><br>,<br>C_n). | Total injection:<br>Constrained to be a total<br>function and partial injection.                                                                 |
+| R ::=<br>sur<br>(, D_m<br>-><br>,<br>C_n). | Partial surjection: Same as partial function;<br>C1××Cn<br>additionally must be total on<br>(to<br>tality is modified by<br>any).                |
+
+>>>
+| R ::=<br>fun<br>(, D_m<br>=><br>,<br>C_n). |
+ 
+>>>
+| R ::=<br>inj<br>(, D_m<br>=><br>,<br>C_n). |
+The extracted relevant part of the context is:
+
+| R ::=<br>bij<br>(, D_m<br>-><br>,<br>C_n). | Bijection:<br>Constrained to be a total surjec<br>tion and partial injection; partiality arrow has<br>no effect.                                 |
+| R ::=<br>bij<br>(, D_m<br>=><br>,<br>C_n). | Bijection:<br>Constrained to be a total surjec<br>tion and partial injection.                                                                    |
+
+This part appears to be related to the syntax of the FORMULA programming language, specifically the `bij` block.
+> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> 
+> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+> 
+> Nesting rules and what’s required inside each block.
+> # <span id="page-37-0"></span>2.6 SYMBOLIC CONSTANTS.
+
+> 1: model InfiniteTree of AlgTrees
+> 
+> 2: {{
+>     3: infinite_left is Node(infinite_right, NIL).
+>     4: infinite_right is Node(NIL, infinite_right).
+>     5: Root(Node(infinite_left, infinite_right)).
+>     }}
+>
+> The *inf ini te*_*lef t* node has an infinitely deep subtree as its left node, and the *inf ini te*_*r i ght* node has an infinitely deep subtree as its right node. This problem is detected and the following error is reported.
+>
+> ```
+> 1: inf.4ml (4, 4): Symbolic constant InfiniteTree.%infinite_right is
+> 2: defined using itself.
+> 3: inf.4ml (3, 4): Symbolic constant InfiniteTree.%infinite_left is
+> 4: defined using itself.
+> ```
+# Extracted relevant parts:
+
+* `model` block structure
+* `transform`, `machine`, `rule`, `type`, and `constraint` blocks structure
+* Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use
+* Nesting rules
 *domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint* blocks.
 Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
 Nesting rules and what’s required inside each block.
+The extracted relevant part of the context is:
+
+```
+# <span id="page-38-0"></span>2.7 SEPARATE COMPILATION
+
+A FORMULA module can refer to modules in other files. The compiler will load and compile all files required to completely compile a program. There are several ways to refer to modules in another files. The first way is to qualify the module name with a source file using the *at* operator. For example:
+
+```
+model M of D at "foo.4ml" {{ ... }}
+```
+> model M of D at "foo.4ml" {{ ... }}
+> 
+> The compiler will look for a domain named *D* in the file *foo.4ml*. This method does not affect the resolution of any other occurrence of *D*. For example, this code loads two different domains, both called *D*, from different files:
+>
+> ```
+> 1: model M1 of D at "..\\..\\version1.4ml" {{ ... }}
+> 2: model M2 of D at '"..\..\version2.4ml"' {{ ... }}
+> ```
+>
+> (Relative paths are resolved w.r.t. to the path of file where they occur.) However, it is illegal to define two modules with the same name in the same file.
+>
+> ```
+> 1: model M of D at "version1.4ml" {{ ... }}
+> 2: model M of D at "version2.4ml" {{ ... }}
+> ```
+>
+> This causes an error:
+>
+> ```
+> 1: ex.4ml (2, 1): The module M has multiple definitions.
+> 2: See ex.4ml (1, 1) and ex.4ml (2, 1)
+> ```
+*domain*, *model*, *transform*, *machine*, *rule*, *type*, and *constraint* blocks.
+Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+Nesting rules and what’s required inside each block.
+# <span id="page-40-0"></span>CHAPTER
+
+**3**
+
+# **Rules and Domain Constraints**
+
+Domain constraints are essential for defining "classes of things". So far we have demonstrated type constraints and a few kinds of relation / function constraints (that also appear in type declarations).
+
+A basic rule has the following syntax:
+
+head :- body.
+> head :- body.
+>
+> The *body* part can contain anything a query can contain. The *head* part is a sequence of constructor applications applied to constants and variables.
+>
+> A rule means:
+>
+> "Whenever the body is provable for some variable assignment, then the head is also provable for that variable assignment."
+>
+> Thus, a rule is a logical statement, but it can also be *executed* (like a query) to grow the set of provable values.
+>
+> Consider the problem of computing the ancestors between vertices in a *RelTr ees* model. First, we introduce a helper constructor called *anc*( , ) into the *RelTr ees* domain to represent the ancestor relationship:
+>
+> anc ::= (ancestor: V, descendant: V).
+>
+> Notice that *anc* is not modified with *new* (or any other modifier that implies *new*). This means an *anc* value can never be asserted by a model. The only legal way to prove an *anc*
+NO_OUTPUT.
+NO_OUTPUT.
+NO_OUTPUT.
+*domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint* blocks.
+
+Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+
+Nesting rules and what’s required inside each block.
+# <span id="page-43-0"></span>3.3 INTERPRETED FUNCTIONS.
+
+FORMULA also provides many *interpreted functions*, such as +, *and*(, ), *toSt r ing* (), etc... An interpreted function can appear anywhere a *t*, *t* <sup>0</sup> or *<sup>t</sup><sup>i</sup>* appears in Tables [3.1](#page-42-1) and [3.2.](#page-42-2) (See Section [5](#page-64-0) for the full list of interpreted functions.) 
+
+```
+1: SumToParent(v) :-
+2: Parent(x, Context(_, v)),
+3: Parent(y, Context(_, v)),
+4: x.lbl + y.lbl = v.lbl.
+```
+> Context:
+>>
+>
+```
+1: SumToParent(v) :-
+2: Parent(x, Context(_, v)),
+3: Parent(y, Context(_, v)),
+4: x.lbl + y.lbl = v.lbl,
+5: xlbl = x.lbl, xlbl : Real,
+6: ylbl = y.lbl, ylbl : Real.
+```
+# Structure of blocks
+- `domain`: Starts with a line number and a label, followed by an optional block comment.
+- `model`: Starts with a line number and a label, followed by a keyword (like `of`), and then the name of the model.
+
+# Grammar keywords
+- `new`: Used to define new types or values.
+- `ensures`, `no`, `conforms`, `:-`: Used in constraints and rules.
+
+# Nesting rules
+- Each block must be on its own line.
+- Indentation is used to denote nesting, with a space character being the minimum indentation.
+# FORMULA Programming Language Technical Cheat Sheet
+
+## Structure of Blocks
+
+- `domain`: Not explicitly defined in the given context.
+- `model`: Not explicitly defined in the given context.
+- `transform`: Not explicitly defined in the given context.
+- `machine`: Not explicitly defined in the given context.
+- `rule`: Not explicitly defined in the given context.
+- `type`: Not explicitly defined in the given context, but a type environment is shown as:
+  ```
+v: V(Integer)
+˜dc0: Parent(V(Integer), Context({{RT}} + {{LFT}}, V(Integer)))
+x: V(Integer)
+˜dc1: {{RT}} + {{LFT}}
+˜dc2: Parent(V(Integer), Context({{RT}} + {{LFT}}, V(Integer)))
+y: V(Integer)
+˜dc3: {{RT}} + {{LFT}}
+˜sv0: Integer
+˜sv1: Integer
+˜sv2: Integer
+```
+- `constraint`: Not explicitly defined in the given context.
+
+## Grammar Keywords
+
+- `new`: Not explicitly defined in the given context.
+- `ensures`: Not explicitly defined in the given context.
+- `no`: Not explicitly defined in the given context.
+- `conforms`: Not explicitly defined in the given context.
+- `:-`: Not explicitly defined in the given context, but a type environment shows a colon (`:`) used for separation:
+  ```
+v: V(Integer)
+˜dc0: Parent(V(Integer), Context({{RT}} + {{LFT}}, V(Integer)))
+x: V(Integer)
+˜dc1: {{RT}} + {{LFT}}
+˜dc2: Parent(V(Integer), Context({{RT}} + {{LFT}}, V(Integer)))
+y: V(Integer)
+˜dc3: {{RT}} + {{LFT}}
+˜sv0: Integer
+˜sv1: Integer
+˜sv2: Integer
+```
+- Nesting rules:
+  - The `type` block can contain multiple lines, but it does not appear to have a specific nesting rule.
+  - The `type` environment shows that each line is separated by a colon (`:`) and has an indentation level indicating the nesting.
+> Context:
+>>
+Parent(x, Context(\_, v)), Parent(y, Context(\_, v))
+
+In the first matching constraint we did not provide a variable to bind the matching constraint (using the *is* operator). The compiler generates one called *˜dc0* and its type is:
+
+Parent(V(Integer), Context({{RT}} + {{LFT}}, V(Integer)))
+
+This matching constraint is guaranteed to match only *Parent* values whose child is an integer-labeled vertex in the context of an integer-labeled parent. 
+
+## 3.5. SET COMPREHENSIONS 33
+˜sv0 = x.lbl, ˜sv1 = y.lbl, ˜sv2 = z.lbl
+V ::= new (lbl: String).
+ex.4ml (8, 80): Argument 1 of function + is badly typed.
+ex.4ml (8, 80): Argument 2 of function + is badly typed.
+> Context:
+>>>
+```
+1: indeg_atleast_2(v) :-
+2: v is V,
+3: e1 is E(_, v), e2 is E(_, v),
+4: e1 != e2.
+5:
+6: indeg_atleast_3(v) :-
+7: v is V,
+8: e1 is E(_, v), e2 is E(_, v), e3 is E(_, v),
+9: e1 != e2, e1 != e3, e2 != e3.
+```
+
+> Relevant parts:
+- The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks (not explicitly shown in the provided context).
+- Grammar keywords and their valid use:
+  - `new`
+  - `ensures`
+  - `no`
+  - `conforms`
+  - `:-`
+{{ t1, ..., tn | body }}
+
+The body part can be legal rule body (e.g. it can contain the semicolon operator and nested comprehensions).
+
+expressions *t*1,...,*t<sup>n</sup>* can be any legal combination of constants, constructors, variables, and selectors.
+
+A set comprehension means:
+
+"Form a set *S* of values as follows: For every assignment of variables satisfying the body substitute these values in to each *t<sup>i</sup>* and add each *t<sup>i</sup>* to the set *S*.
+> Context:
+>>
+indeg(v, k) :- v is V, k = count({{ e | e is E(\_, v)}}).
+
+The *count*() operation is an interpreted function that takes a set comprehension and returns its size. The comprehension forms a set of all the edges with *v* in the destination position, and *k* is equal to the size of this set. Notice that the comprehension sees the variables declared outside of it, and so each choice of value for the variable *v* instantiates *v* inside the comprehension. However, variables introduced inside the comprehension do not escape. The variable *e* is scoped to the comprehension and other comprehensions cannot see it. Consider this rule:
+
+q :- count({{x | V(x), x > 0}}) = count({{x | V(x), x < 0}}).
+> q :- count({{x | V(x), x > 0}}) = count({{x | V(x), x < 0}}).
+
+The first occurrence of *x* is lexically scoped to the first comprehension, and second occurrence is scoped to the second comprehension. This rule tests if the number of vertices with positive labels equals the number with negative labels. This rules *does not* constrain *x* to be both positive and negative (which is impossible).
+
+Comprehensions can only be used in combination with certain interpreted predicates / interpreted functions. Variables can only be assigned values, so it is illegal to assign a set comprehension to a variable. The interpreted predicate *no* is used to test if a comprehension is empty, it is equivalent to the constraint:
+
+count({{ ... }}) = 0
+
+This rule computes all the *sources* in a graph, i.e. all the vertices with zero in-degree.
+
+source(v) :- v is V, no {{ e | e is E(\_, v) }}.
+
+> structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks:
+  - domain: 
+    - Comprehensions can only be used in combination with certain interpreted predicates / interpreted functions.
+  - model: 
+    - The first occurrence of *x* is lexically scoped to the first comprehension, and second occurrence is scoped to the second comprehension.
+  - transform: 
+    - This rule tests if the number of vertices with positive labels equals the number with negative labels. This rules *does not* constrain *x* to be both positive and negative (which is impossible).
+  - machine: 
+    - source(v) :- v is V, no {{ e | e is E(\_, v) }}
+  - rule: 
+    - q :- count({{x | V(x), x > 0}}) = count({{x | V(x), x < 0}})
+  - type: 
+    - The interpreted predicate *no* is used to test if a comprehension is empty, it is equivalent to the constraint:
+      count({{ ... }}) = 0
+  - constraint: 
+    - count({{ ... }}) = 0
+
+> grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use:
+  - new: Not mentioned in the context.
+  - ensures: Not mentioned in the context.
+  - no: The interpreted predicate used to test if a comprehension is empty, it is equivalent to the constraint count({{ ... }}) = 0.
+  - conforms: Not mentioned in the context.
+  - :-: Used as a rule separator.
+
+> nesting rules and what’s required inside each block:
+  - domain: Comprehensions can only be used in combination with certain interpreted predicates / interpreted functions.
+  - model: The first occurrence of *x* is lexically scoped to the first comprehension, and second occurrence is scoped to the second comprehension.
+  - transform: This rule tests if the number of vertices with positive labels equals the number with negative labels. This rules *does not* constrain *x* to be both positive and negative (which is impossible).
+  - machine: source(v) :- v is V, no {{ e | e is E(\_, v) }}
+  - rule: q :- count({{x | V(x), x > 0}}) = count({{x | V(x), x < 0}})
+  - type: The interpreted predicate *no* is used to test if a comprehension is empty, it is equivalent to the constraint count({{ ... }}) = 0.
+  - constraint: count({{ ... }}) = 0
+> Context:
+>>>
+source(v) :- v is V, no {{ e | e is E(\_, v) }}.
+
+The body of this comprehension consists of a single matching constraint. For the special case where *no* is applied to a comprehension with a single matching constraint, then only the body of the comprehension needs to be written.
+
+source(v) :- v is V, no e is E(\_, v).
+
+Equivalently,
+
+source(v) :- v is V, no E(\_, v).
+* The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+* Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+* Nesting rules and what’s required inside each block.
+> 
+1: IntLabel ::= (Integer).
+2:
+3: IntLabel(x) :- V(x).
+4: isIntLabel :- IntLabel(x), V(x).
+
+> ex.4ml (3, 4): Argument 1 of function IntLabel is unsafe. Some values of type String are not allowed here.
+
+> Contrast this with the rule in line [4.](#page-48-2) Here the conjuncts *IntLabel*(*x*) and *V* (*x*) constrain *x* to be an integer. This rule is accepted by the compiler.
+* The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, and `constraint` blocks.
+* Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+* Nesting rules and what’s required inside each block.
+> Context:
+>>>
+Rules are executed so that all values are proved before a dependent set comprehension is executed. This strategy always computes a unique result, which coincides with the logical interpretation of rules.
+>>>
+Example:
+
+```
+1: smallInDegree :- no {{ v | indeg(v, k), k > 3 }}.
+2: indeg(v, k) :- v is V, k = count({{ e | e is E(_, v)}}).
+```
+> Question: 
+                Extract a **technical cheat sheet** of the FORMULA programming language.
+                Focus only on:
+                    - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+                    - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+                    - Nesting rules and what’s required inside each block.
+                DO NOT include historical background, tooling usage, or example explanations.
+
+>>>
+s(x) :- x = 0; x is s.
+
+The value *s*(0) is provable, and so the value *s*(*s*(0)) is provable, and so the value *s n* (0) is provable for every positive integer *n*. In fact, the successor function is one way to represent the natural numbers. Users should not try to axiomatize theories, such as the theory of natural numbers, using FORMULA. Instead, they should utilize the interpreted functions that already embed these theories into the FORMULA language.
+
+## 3.8. COMPLEX CONFORMANCE CONSTRAINTS 39
+
+# <span id="page-52-0"></span>3.8 COMPLEX CONFORMANCE CONSTRAINTS
+
+conforms body.
+
+**Definition 3.8.1** (Model Conformance)**.** A model conforms to its domain if:
+> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> - Every assertion in M is constructed from new-kind constructors.
+> - Every value in M is well-typed.
+> - The body of every conformance constraint is satisfied for some substitution of the variables.
+> All conformance constraints must be provable for *D*.*conf orms* to be provable.
+# Technical Cheat Sheet for FORMULA Programming Language
+
+## Domain Structure
+- `domain` block:
+  - Contains "New-kind" and "Derived-kind" constructors.
+  - Has the following structure:
+    ```
+1: domain <block_name>
+2: {{
+   New-kind constructors.
+3: V ::= <constructor_1>
+4: E ::= <constructor_2>
+   Derived-kind constructors.
+5: ...
+6: ...
+7: Acyclicity constraint.
+8: }}
+```
+
+## Grammar Keywords
+- `new`: Used to define new kinds and derived kinds.
+  - Example: `V ::= new (lbl: Integer).`
+- `ensures`, `no`, `conforms`, `:-`:
+  - Not explicitly defined in the provided context.
+
+## Nesting Rules
+- The `domain` block has no nesting rules.
+- Each "New-kind" and "Derived-kind" constructor is a separate block with its own structure.
 *domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint*
 
-Grammar keywords:
-- new
-- ensures
-- no
-- conforms
-- :- 
+Grammar keywords and their valid use:
 
-Nesting rules and what’s required inside each block:
-
-- The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-*domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint* blocks.
-
-Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-
-Nesting rules and what’s required inside each block.
-> domain D {{ Id ::= Integer. }} 
-> domain D' {{ Id ::= String. }}
-> Error: Conﬂicting deﬁnitions of type Id
-1: domain D
-2: {{
-3:
-Id ::= Integer.
-4:
-Id ::= String.
-5: }}
-The extracted relevant part of the context is:
-
-MULA accepts any set of type declarations as long as their meaning is consistent across the
-module. For example, this module is legal because it deﬁnes Id in two equivalent ways.
-Legal: All deﬁnitions of type Id are equivalent
-1: domain D
-2: {{
-3:
-Id ::= Integer.
-4:
-Id ::= NegInteger + {{0}} + PosInteger.
-5: }}
-*domain*
-- domain Colors
-- NamedColor ::= {{ RED, GREEN, BLUE }}
-- Color
-::= {{ RED, GREEN, BLUE, 0..16777215 }}
-*domain*
-{{
-    *transform*
-    {{
-        *machine*
-        {{
-            *rule*
-            {{
-                *type*
-                {{
-                    *constraint*
-                }}
-            }}
-        }}
-    }}
-}}
-
-*grammar keywords*
 - `new`
 - `ensures`
 - `no`
 - `conforms`
 - `:-`
 
-*nesting rules*
-- The structure of `domain` block is defined by the following grammar:
-  - `domain Colors` is a valid domain declaration.
-- Each `transform`, `machine`, and `rule` block can be nested inside another block, but there are no nesting requirements specified.
-> Context:
->>>
-Data constructors are similar to structs or records in C-like languages, but more general.
-Consider the task of deﬁning a node struct in C#. The following code is illegal because the
-struct Node directly depends on Node values.
-Cannot deﬁne a struct that depends directly on itself.
-1: struct Node
-2: {{
-3:
-int key; Node left; Node right;
-4:
-Node(int k, Node l, Node r)
-5:
-{{ key = k; left = l; right = r; }}
-6: }};
-The problem is that Node must have a default value, and there is no way to construct
-this default value. The deﬁnition becomes legal if str uct is replaced with class and then
-null is a valid default value for the lef t and r ight ﬁelds. However, this comes with the
-price that node equality is signiﬁcantly weakened, i.e. n == m only if the variables n and m
-hold the same reference. In other words, binary trees cannot be compared as if they were
-just values.
-The declarations of FORMULA constructors can cyclically depend on themselves.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> 
-> 1: domain Trees
-> 2: {{
-> 3:
-> Node ::= (key
-> : Integer,
-> 4:
-> left : Node + {{NIL}},
-> 5:
-> right: Node + {{NIL}}).
-> 6: }}
-> 
-> The only requirement on constructors is that there must be some arguments of ﬁnite
-> size satisfying the type constraints of the constructor. For example, a minimal node value
-> can be constructed by:
-> Node(0, NIL, NIL)
-> 
-1: domain Trees
-2: {{
-3:
-Node ::= (key
-: Integer,
-4:
-left : Node,
-5:
-right: Node + {{ NIL}}).
-6: }}
-The problem is the lef t ﬁeld can only take a node value, but the only way to construct
-a node value is to apply the node constructor. Therefore, only an inﬁnitely long sequence
-of node applications could construct such a value.
-> 
-1: domain Trees
-2: {{
-3:
-Node ::= (key
-: Integer,
-4:
-left : Node + {{ NIL}},
-5:
-right: Node + {{ NIL}}).
-6:
-7:
-Node ::= (key: Integer, left: Tree, right: Tree).
-8:
-Tree ::= Node + {{ NIL}}.
-9: }}
-> Node ::= (key: Integer, left: Tree, right: Tree).
-> Tree ::= Node | NIL.
-> The type Tree is a super-type of the type Node, because in contains all node values and 
-> the additional value NIL.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-> Context:
->>
-(2.1)
-Classically, a directed graph is represented by a set of vertices V and set of edges E; each
-e ∈E is a pair of vertices. Furthermore, suppose vertices are represented by integers, then
-the set of all ﬁnite integer-labeled graphs is:
-G
-de f
-= {{(V,E) | V ⊂Z∧E ⊆V ×V }}
-where every V is ﬁnite.
-Here is an example of a speciﬁc graph:
-Gex
-de f
-= ({{1,2,100}},{{(1,2),(100,100)}}).
-FORMULA does not directly support sets and relations, so we cannot express vertices
-and edges as sets. Instead, integer-labeled graphs are represented using two data construc-
-tors V and E as follows:
-13
-The extracted relevant part of the context is:
-
-> CHAPTER 2. DOMAINS AND MODELS
-> 
-> Example 2.1 (Integer-labeled graphs).
-> 1: domain IntGraphs
-> 2: {{
-> 3:
-> V ::= new (lbl: Integer).
-> 4:
-> E ::= new (src: V, dst: V).
-> 5: }}
-> 
-> Example 2.2 (A small graph).
-> 1: model Gex of IntGraphs
-> 2: {{
-> 3:
-> V(1).
-> 4:
-> V(2).
-> 5:
-> V(100).
-> 6:
-> E(V(1), V(2)).
-> 7:
-> E(V(100), V(100)).
-> 8: }}
-*domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint*
-
-Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-
-Nesting rules and what’s required inside each block.
-The extracted relevant part of the context is:
-
-query can be rewritten as:
-[]> query Gex E(_, y), E(y, _)
-Underscores are useful for visually emphasizing those variables that appear in multiple
-places. Queries can also be formed from built-in relations and constraints.
-[]> query Gex V(x), x > 20
-Constructor labels can be used to write more readable queries. The query:
-“Is there an edge whose source vertex has a label greater than 100?”
-can be written as:
-[]> query Gex e is E, e.src.lbl > 100
-The constraint e is E requires e to be a provable value of type E.
-The order in which conjuncts are written does not matter; the semantics of a query is the
-same. However, queries can only check for properties that can be answered using model
-assertions and a ﬁnite number of evaluations. For example, this query is not allowed:
-[]> query Gex x > 100
-*domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint* blocks.
-Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-Nesting rules and what’s required inside each block.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-> structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-The extracted relevant part of the context is:
-
-> Context:
->>>
-Did we capture this constraint correctly? The answer is that it depends on how we choose
-to deﬁne the set of vertices V present in a model M. There are two options: (1) Every
-occurrence of a vertex value anywhere in the model is implicitly a member of V . (2) Only
-those vertices that are provable are members of V . Consider this example:
-1: model SomeVertices of IntGraphs
-2: {{
-3:
-V(1).
-4:
-E(V(1), V(2)).
-5: }}
-Under the ﬁrst deﬁnition, the vertex set for this model is {{1,2}} and the edge set is {{(1,2)}}.
-This satisﬁes the constraint E ⊆V ×V . Under the second deﬁnition the vertex set is only
-{{1}} and the edge set violates the constraint because 2 ∉V . By default, FORMULA uses the
-second and more restrictive deﬁnition: E ⊆V ×V means every argument to E(,) must be
-provable. Models violating this property do not conform to the domain. These kinds of
-constraints are so common that FORMULA automatically introduces them. To see this,
-add the code for SomeVer tices to ex1.4ml and run this query:
-> Question: 
-            Extract a **technical cheat sheet** of the FORMULA programming language.
-            Focus only on:
-                - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-                - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-                - Nesting rules and what’s required inside each block.
-            DO NOT include historical background, tooling usage, or example explanations.
-
-> Context:
->>>
-binary tree constructor:
-Node ::= new (left: any Node + {{NIL}}, right: any Node + {{NIL}}).
-Of course, binary trees can also be encoded using ﬁnite relations, but the encoding is a
-different one from the recursive constructor shown above.
-2.4
-FINITE FUNCTIONS.
-Finite functions are a special case of ﬁnite relations satisfying additional constraints. Con-
-sider the representation of a forest F of binary trees as follows:
-F
-de f
-= (V,parent)
-where parent : V →{{⊤}}∪({{L,R}}×V ).
-The set V contains the vertices of the forest and the function parent assigns to each vertex v
-its parent: parent(v) = (L,u) if v is the left child of u; parent(v) = (R,u) if v is the right child
-> 
-CHAPTER 2. DOMAINS AND MODELS
-of u; parent(v) = ⊤if v is a root. Additionally, the parent function should not introduce a
-cycle, but we ignore this constraint for now. The parent function can be treated as a ﬁnite
-relation by listing its input-output pairs. Consider this forest where 1 is a root, 2 is its left
-child, and 3 is its right child:
-Fex
-de f
-= ({{1,2,3}},{{(1,⊤),(2,(L,1)),(3,(R,1))}}).
-The parent relation encodes a total ﬁnite function if it is total on the domain:
-∀v ∈V. ∃x. (v,x) ∈parent,
-and every input is related to a unique output:
-∀v ∈V. ∀x, y. (v,x) ∈parent ∧(v, y) ∈parent ⇒x = y.
-
-> 
-domain RelTrees
-2: {{
-3:
-V
-::= new (lbl: Integer).
-4:
-Parent
-::= fun (chld: V => cxt: any {{ROOT}} + Context).
-new (lbl: Integer).
-Parent
-::= fun (chld: V => cxt: any {{ROOT}} + Context).
-Context ::= new (childPos: {{LFT, RT}}, prnt: V).
- 
-Grammar keywords:
-- new
-- ensures
-- no
-- conforms
-- :-
- 
 Nesting rules:
-- domain of the relation and the arguments on the right side correspond to the codomain.
-- uniqueness constraints are injected by the f un modiﬁer.
-- totality constraints are injected by the totality arrow =>.
-NO_OUTPUT.
-> domain AlgTrees
-> {{
-> Node ::= new (left: any Node + {{NIL}},
-> right: any Node + {{NIL}}).
-> Root ::= new (root: any Node).
-> }}
-> model Fex' of AlgTrees
-> {{
-> Root(
-> Node(
-> Node(NIL, NIL),
-> Node(NIL, NIL))).
-> }}
-> structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+- The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
 
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-
-> Nesting rules and what’s required inside each block.
-The extracted relevant part of the context is:
-
-1: model InfiniteTree of AlgTrees
-2: {{
-3:
-infinite_left
-is Node(infinite_right, NIL).
-4:
-infinite_right is Node(NIL, infinite_right).
-5:
-Root(Node(infinite_left, infinite_right)).
-6: }}
-
-This appears to be an example of a FORMULA programming language definition, specifically a model block.
-*domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint* blocks. 
-Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-Nesting rules and what’s required inside each block.
-*domain*, *model*, *transform*, *machine*, *rule*, *type*, *constraint* blocks.
-Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-Nesting rules and what’s required inside each block.
-The extracted relevant part of the context is:
-
-model M of D at "foo.4ml" {{ ... }}
-
-model M1 of D at "..\\..\\version1.4ml" {{ ... }}
-model M2 of D at '"..\..\version2.4ml"' {{ ... }}
-> model M of D at "version2.4ml" {{ ... }}
-> modules.D = "D at foo.4ml"
-> modules.D' = "D' at foo.4ml"
-> model M of D {{ ... }}
-No output.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-
-> Nesting rules and what’s required inside each block.
-The extracted relevant part of the context is:
-
-*   `anc ::= (ancestor: V, descendant: V).`
-> Extract a **technical cheat sheet** of the FORMULA programming language.
-> 
-> - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> - Nesting rules and what’s required inside each block.
-> 
-> DO NOT include historical background, tooling usage, or example explanations.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-The extracted relevant part of the context is:
-
-3:
-RelTrees.hasCycle :- anc(u, w), anc(w, u).
-The extracted relevant part of the context is:
-
-3.2. RULE BODIES
-29
-Matching Constraints#
-Syntax
-Meaning#
-q
-true if the derived constant q is provable; false otherwise.
-f(t1,...,tn)
-true for every assignment of variables where f (t1,...,tn) is
-provable; false otherwise.
-x is f(t1,...,tn)
-true for every assigment of variables where f (t1,...,tn) is
-provable and x = f (t1,...,tn); false otherwise.
-x is T
-true if x is a provable value and a member of the type
-named T; false otherwise.
-
-Table 3.1: Table of matching constraints.
-Interpreted Predicates#
-Syntax
-Meaning#
-no {{...}}
-true if the set comprehension is empty; false otherwise.
-t = t’
-true if t and t′ are the same value; false otherwise.
-t != t’
-true if t and t′ are diﬀerent values; false otherwise.
-t < t’
-true if t is less than t′ in the order of values; false otherwise.
-t <= t’
-true if t is less than equal to t′ in the order of values; false otherwise.
-t > t’
-true if t is greater than t′ in the order of values; false otherwise.
-t >= t’
-
-This part of the context appears to be relevant to the question about the FORMULA programming language, specifically regarding grammar keywords and their valid use.
+Note: There is no information about the nesting rules for each block in the provided context.
 > Context:
 >>
-t > t’
-true if t is greater than t′ in the order of values; false otherwise.
-t >= t’
-true if t is greater than or equal to t′ in the order of values; false
-otherwise.
-x : T
-true if x is a member of the type named T; false otherwise.
-Table 3.2: Table of interpreted predicates.
-3.2
-RULE BODIES
-The body of a rule is a conjunction of constraints. Constraints can be either matching con-
-tstraints or interpreted predicates. A matching constraint is satisﬁed if there is some substi-
-tution of the variables where the resulting value is provable. An interpreted predicate is
-satisﬁed if there is some substitution of the variables where a special predicate evaluates to
-true. Tables 3.1 and 3.2 list the forms of matching constraints and interpreted predicates.
-The order in which conjuncts appear is irrelevant; as with queries, all variables must be
-orientable.
+1: Truth value: true
+2:
+3: _Query_263ea486_4485_4bff_bda4_c99ea8f94c27.requires :- (2, 1)
+4: ˜dc0 equals
+5: _Query_263ea486_4485_4bff_bda4_c99ea8f94c27.˜requires0 :- (2, 1)
+6: ˜dc0 equals
+7: path(V(2), V(2)) :- (6, 4)
+8: ˜dc0 equals
+9: E(V(2), V(1)) :- (14, 4)
+11: ˜dc1 equals
+12: path(V(1), V(2)) :- (6, 4)
+13: ˜dc0 equals
+14: E(V(1), V(2)) :- (13, 4)
 NO_OUTPUT.
-*AS IS*
+[]>
 
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
+# **Domain and Model Composition**
+
+Domains and models can be combined to build up more complicated modules. Domain composition allows type declarations, rules, and conformance constraints to be combined.
+
+## <span id="page-56-1"></span>4.1 NAMESPACES
+>>>
+[]>
+
+# <span id="page-57-0"></span>CHAPTER
+
+**5**
+
+# **Machine Composition**
+
+Machines can be composed from multiple machines using the `machine` block.
+
+# <span id="page-57-1"></span>5.1 MACHINE COMPOSITION
+
+The `machine` block is used to compose multiple machines into a single machine. The structure of a `machine` block is as follows:
+
+```markdown
+machine M = {{
+  domain D,
+  model M',
+  transform T,
+  machine M''
+}}
+```
+
+where:
+- `M` is the name of the composed machine.
+- `D` is the domain of the composed machine.
+- `M'` is the model of the composed machine.
+- `T` is the transformation function of the composed machine.
+- `M''` is the machine that the composed machine transforms.
+
+The nesting rules for a `machine` block are as follows:
+
+*   The `domain`, `model`, and `transform` blocks must be defined before the `machine` block.
+*   The `machine` block can contain other `machine` blocks, which are used to compose multiple machines into a single machine.
+The extracted relevant part of the context is:
+
+Table [4.1](#page-57-0) describes the introduction and placement of domain symbols. Note that *type constants* are used to support reflection, but we have not discussed them yet.
+
+However, since the question specifically asks for information about the structure of certain blocks in the FORMULA programming language, I will extract a different part:
+
+>>>
+Every domain *D* starts with two namespaces: the root namespace and a namespace *D*, which is a child of the root. Whether a declaration places symbols in the root or the *D* namespace depends on the kind of declaration.
+The extracted relevant part of the context is:
+
+| Type ::=                     | The symbol<br>and the<br>type constant<br>are placed in<br>Type<br>#Type<br>the root. If declaration is an<br>n-ary constructor declaration then<br>type constants<br>#Type[0], ,<br>are also placed in<br>#Type[n-1]<br>the root. |  |
+| {{ , Cnst,<br>}}               | The new-kind user constant<br>is placed in the root.<br>Cnst                                                                                                                                                                       |  |
+| DerCnst :-                   | The<br>derived-kind<br>user<br>constant<br>is<br>placed<br>in<br>the<br>DerCnst<br>namespace<br>D. |
+
+This part of the context appears to be related to the structure of `domain`, `model`, and possibly other blocks in the FORMULA programming language, as well as grammar keywords.
+The extracted relevant part of the context is:
+
+| x                            | A variable introduced in a rule is placed in the root namespace.<br>Variables can be introduced independently by many rules; this<br>does not cause a conflict.                                                                    |  |
+| D.Constant                   | A predefined symbol defined to be the union of all new-kind<br>constants (including numerics and strings).<br>Placed in the<br>namespace<br>D along with<br>D.#Constant.                                                           |  |
+| D.Data                       | A predefined symbol defined to be the union of all new-kind<br>constants (including numerics and strings) and data construc<br>tors. Placed in the namespace<br>D along with<br>D.#Data.                                           |
+* domain
+* model
+* transform
+* machine
+* rule
+* type
+* constraint 
+
+* new 
+* ensures 
+* no 
+* conforms 
+* :-
+*domain*, *model*, *transform*, *machine*, *rule*, *type*, and *constraint* blocks. 
+
+Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+
+Nesting rules and what’s required inside each block.
+NO_OUTPUT.
+domain D includes D1, ..., Dn {{ ... }}
+
+domain D contains all the same definitions as D but adds an additional namespace called D under the root. All aliases are placed here as symbolic constants.
+
+domain D1, ..., Dn {{ ... }}
+> Context:
+>>
+Domains are composed by writing:
+
+domain D includes D1, ..., Dn {{ ... }}
+
+Composition imports all the declarations of *D*1,...,*D<sup>n</sup>* into *D*. If a symbol is in namespace *n* in *D<sup>i</sup>* , then it remains in namespace *n* in *D*. If this merging causes a symbol to receive contradictory declarations, then an error is reported. As a corollary, importing the same domain several times has no effect, because all declarations trivially agree. Here is an example of a problematic composition:
+
+1: domain D1 {{ q :- X = 0. }} 2: domain D2 {{ T ::= {{ X }}. }} 3: domain D includes D1, D2 {{ }}
+
+In domain *D*<sup>1</sup> the symbol *X* is a variable, but in domain *D*<sup>2</sup> it is a user constant. These declarations are incompatible and an error is returned:
+
+ex.4ml (3, 23): The symbol X has multiple definitions.
+
+>>>
+ 
+Note: I extracted only the parts of the context that directly relate to the structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks and grammar keywords as requested in the question.
 > The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
 
 > Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
 
 > Nesting rules and what’s required inside each block.
-> 
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
 > The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
 > 
 > Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
 > 
 > Nesting rules and what’s required inside each block.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+> # Example 4.1 (Classes of graphs).
+
+```
+1: domain Digraphs
+2: {{
+3: V ::= new (lbl: Integer).
+4: E ::= new (src: V, dst: V).
+5: }}
+6:
+7: domain DAGs extends Digraphs
+8: {{
+9: path ::= (V, V).
+10: path(u, w) :- E(u, w); E(u, v), path(v, w).
+11: conforms no path(u, u).
+12: }}
+13:
+14: domain Trees extends DAGs
+15: {{
+16: conforms no {{ w | E(u, w), E(v, w), u != v }}.
+17: }}
+```
+
+## <span id="page-60-0"></span>4.3 THE RENAMING OPERATOR
+
+Suppose we would like to build a domain representing two distinct graphs, i.e. with two distinct edge and vertex sets. One construction would be the following:
+
+```
+1: domain TwoDigraphs
+2: {{
+3: V1 ::= new (lbl: Integer).
+4: E1 ::= new (src: V1, dst: V1).
+5:
+6: V2 ::= new (lbl: Integer).
+7: E2 ::= new (src: V2, dst: V2).
+8: }}
+```
+
 > 
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> 
-> Nesting rules and what’s required inside each block.
+* The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+* Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+* Nesting rules and what’s required inside each block.
+The extracted relevant part of the context is:
+
+```
+1: domain IsoDAGs extends Left::DAGs, Right::DAGs
+2: {{
+3: Iso ::= bij (Left.V => Right.V).
+4:
+5: conforms no {{ e | e is Left.E(u, w),
+6: Iso(u, u'), Iso(w, w'),
+7: no Right.E(u', w') }}.
+8: conforms no {{ e | e is Right.E(u', w'),
+9: Iso(u, u'), Iso(w, w'),
+10: no Left.E(u, w) }}.
+11: }}
+```
+
+This domain block appears to define the structure of `domain` blocks in the FORMULA programming language.
 > Context:
 >>>
-i.e. the number of distinct edges coming into a vertex. One might be tempted to write rules
-such as:
-1: indeg_atleast_2(v) :-
-2:
-v is V,
-3:
-e1 is E(_, v), e2 is E(_, v),
-4:
-e1 != e2.
-5:
-6: indeg_atleast_3(v) :-
-7:
-v is V,
-8:
-e1 is E(_, v), e2 is E(_, v), e3 is E(_, v),
-9:
-e1 != e2, e1 != e3, e2 != e3.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-The extracted relevant part of the context is:
-
-A general rule has for the form:
-head1, ..., headm :- body1; ...; bodyn.
-It is equivalent to the set of rules:
-head1, ..., headm :- body1.
-...
-head1, ..., headm :- bodyn.
-A general rules proves all heads head1,...,headm for every satisfying assignment of the
-body. Each head must be formed from constants, constructors, and variables. A rule head
-must satisfy the following properties:
-• Under all circumstances, a rule head must evaluate to a derived constant or a con-
-structed value.
-• Under all circumstances, a rule head must evaluate to a well-typed value.
-• Every variable appearing in a rule head must appear at the top level of the body.
-(The variable cannot be introduced by a comprehension.)
-All of these properties are checked at compile time and generate errors if violated.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-
-> Nesting rules and what’s required inside each block.
-The extracted relevant part of the context is:
-
-1:
-smallInDegree :- no {{ v | indeg(v, k), k > 3 }}.
-2:
-indeg(v, k)
-:- v is V, k = count({{ e | e is E(_, v)}}).
-A graph has a “small in-degree” if no in-degree is greater than three.
-The extracted relevant part of the context is:
-
->
-D.conforms
-Provable if all conformance constraints are satisﬁed.
-D.notRelational
-Provable if a provable value contains f (...,ti,...), f is rela-
-tional on position i, ti = g(...), and g(...) is not provable.
-D.notFunctional
-Provable if a constructor is declared to be a (partial) func-
-tion, but its provable values map an element from the
-domain of the function to several distinct elements in the
-codomain.
-D.notTotal
-Provable if a constructor is declared to be a total func-
-tion, but some element of its domain is not mapped to an
-element of its codomain.
-D.notInjective
-Provable if a constructor is declared to be a (partial) in-
-jection, but several elements of its domain are mapped to
-the same element in its codomain.
-D.notInvTotal
-Provable if a constructor is declared to be a (partial) sur-
-jection, but there is an element of its codomain for which
-no element of the domain is mapped.
-NO_OUTPUT.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-
-> Nesting rules and what’s required inside each block.
-*domain*: 
-- domain DAGs
-- domain RelTrees_Final
-- {{
-New-kind constructors.
-- V ::= new (lbl: Integer).
-- E ::= new (src: V, dst: V).
-- path ::= (V, V).
-- anc ::= (ancestor: V, descendant: V).
-
-*transform*: 
-
-*machine*: 
-
-*rule*: 
-- conforms no path(u,u)
-
-*type*: 
-
-*constraint*: 
-- conforms
-* Extracted relevant parts of the context:
-
-- `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks structure.
-- Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-- Nesting rules and what’s required inside each block.
-
-Note: The specific details of the extracted parts are based on the provided context.
-NO_OUTPUT.
-NO_OUTPUT.
-NO_OUTPUT.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-
-> Nesting rules:
-  - A variable introduced in a rule is placed in the root namespace.
-  - The new-kind user constant Cnst is placed in the root.
-  - The derived-kind user constant DerCnst is placed in the namespace D.
-> Extract a **technical cheat sheet** of the FORMULA programming language.
-> 
-> Focus only on:
->     - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
->     - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
->     - Nesting rules and what’s required inside each block.
-> 
-> DO NOT include historical background, tooling usage, or example explanations.
-
->>>
-tors. Placed in the namespace D along with D.#Data.
-D.Any
-A predeﬁned symbol deﬁned to be the union of all types in the
-domain. Placed in the namespace D along with D.#Any.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> 
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> 
-> Nesting rules and what’s required inside each block.
-> DOMAIN COMPOSITION
-Domains are composed by writing:
-domain D includes D1, ..., Dn {{ ... }}
-Composition imports all the declarations of D1,...,Dn into D. If a symbol is in namespace
-n in Di, then it remains in namespace n in D. If this merging causes a symbol to receive
-contradictory declarations, then an error is reported. As a corollary, importing the same
-domain several times has no effect, because all declarations trivially agree.
-
-This part of the context appears relevant to answer the question about the structure of `domain` blocks in the FORMULA programming language.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-> structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
-> Extract a **technical cheat sheet** of the FORMULA programming language.
-> 
-> Focus only on:
->     - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
->     - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
->     - Nesting rules and what’s required inside each block.
->
->>>
-48
-CHAPTER 4. DOMAIN AND MODEL COMPOSITION
-The extracted relevant part of the context is:
-
+```
 1: model LittleIso of IsoDAGs
 2: {{
-3:
-v1L is Left.V(1).
-4:
-v2L is Left.V(2).
-5:
-v1R is Right.V(1).
-6:
-v2R is Right.V(2).
+3: v1L is Left.V(1).
+4: v2L is Left.V(2).
+5: v1R is Right.V(1).
+6: v2R is Right.V(2).
 7:
-8:
-Left.E(v1L, v2L).
-9:
-Right.E(v2R, v1R).
+8: Left.E(v1L, v2L).
+9: Right.E(v2R, v1R).
 10:
-11:
-Iso(v1L, v2R).
-12:
-Iso(v2L, v1R).
+11: Iso(v1L, v2R).
+12: Iso(v2L, v1R).
 13: }}
+```
 NO_OUTPUT.
-> 
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
+The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+
+Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+
+Nesting rules and what’s required inside each block.
+The extracted relevant part of the context is:
+
+>>
+| x % y                         | x : Real,<br>y : Real,<br>0.<br>y != | 0 ≤<br>r <  y , such that<br>∃q<br>∈<br>Z. x =<br>q ·<br>y +r                                                                          |
+| count({{}})                     | –                                    | The number of elements in<br>{{}}.                                                                                                       |
+| gcd(x, y)<br>gcdAll(x,<br>{{}}) | x : Integer,<br>y : Integer<br>–     | x <br>y =<br>if<br>½<br>0,<br>de f<br>=<br>g cd(y, x % y ).<br>The gcd of all integer elements, or<br>x if there are no such elements. |
+| lcm(x, y)                     | x : Integer,<br>y : Integer          | x  + y  =<br>0 if<br>½<br>0,<br>de f<br>=<br> x<br>·<br>y /g cd(x,<br>y).                                                              |
+The extracted relevant part of the context is:
+
+| minAll(x,<br>{{}})             | –                                         | The smallest element of<br>{{}} in the<br>order of values;<br>x if<br>{{}} is empty.                                                   |  |
+| prod(x,<br>{{}})<br>qtnt(x, y) | –<br>x : Real,<br>y : Real,<br>y !=<br>0. | {{}}∩R<br>= ;,<br>if<br>x<br>(<br>de f<br>=<br>Y<br>e.<br.e∈{{}}∩R<br>q ∈<br>Z, such that<br>∃0<br>≤<br>r <  y .<br>x =<br>q ·<br>y +r |  |
+| sign(x)                      | x : Real                                  | −1<br>x <<br>if<br><br>0,<br>de f<br><br>x =<br>=<br>if<br>0<br>0,<br>x ><br>if<br><br>1<br>0                                   |  |
+| sum(x,<br>{{}})                | –                                         | {{}}∩R<br>= ;,<br>if<br>x<br>(<br>de f<br>=<br>X<br>e.<br.e∈{{}}∩R                                                                     |  |
+
+These blocks appear to be part of the FORMULA programming language, and they describe the structure of various blocks within it.
+The extracted relevant part of the context is:
+
+>>>
+| Syntax            | Side Constraints | Result#                                                        |  |
+|                   |                  |                                                                |  |
+| and(x, y)         | Boolean,<br>x :  | x ∧<br>y.                                                      |  |
+|                   | y :<br>Boolean   |                                                                |  |
+|                   |                  | {{}}∩B<br>= ;,<br>if<br>x<br>(<br>de f                           |  |
+| andAll(x,<br>{{}})  | –                | =<br>^<br>e.<br>e∈{{}}∩B                                         |  |
+| impl(x, y)        | Boolean,<br>x :  | ¬x<br>∨<br>y.                                                  |  |
+>>>
+
+This part of the context appears to be related to the structure and syntax of the FORMULA programming language, specifically the `domain`, `model`, `transform`, `machine`, `rule`, `type`, and `constraint` blocks.
+The extracted relevant part of the context is:
+
+|                   | y :<br>Boolean   |                                                                |  |
+| not(x)            | x :<br>Boolean   | ¬x.                                                            |  |
+|                   |                  |                                                                |  |
+| or(x, y)          | x :<br>Boolean,  | x ∨<br>y.                                                      |  |
+|                   | y :<br>Boolean   |                                                                |  |
+| orAll(x,<br>{{}})   | –                | {{}}∩B<br>= ;,<br>if<br>x<br>(<br>de f<br>=<br>_<br>e.<br>e∈{{}}∩B |
 NO_OUTPUT.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+The extracted relevant part of the context is:
 
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+| strBefore(x, y)           | String,<br>x :<br>y :<br>Natural.                                                                              | Returns the largest substring end<br>y =<br>ing before position<br>y, or<br>² if<br>0.                                              |  |
 
-> Nesting rules and what’s required inside each block.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+This appears to be related to the `strBefore` function in the FORMULA programming language, but it does not provide information on the structure of blocks, grammar keywords, or nesting rules as requested in the question.
+The extracted relevant part of the context is:
 
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+| strFind(x, y, z)          | String.<br>x :<br>String, y :                                                                                  | Returns the index of the first oc<br>currence of<br>x in<br>y;<br>z if<br>y never<br>appears.                                       |  |
+| strFindAll(x, y,<br>z, w) | is<br>a<br>w-terminated<br>natural<br>x<br>list<br>type<br>constant<br>#F.<br>y :<br>String,<br>String.<br>z : | 0<br>Returns a<br>w-terminated<br>-list of<br>F<br>all the indices where<br>y occurs in<br>z;<br>w if it never occurs.              |  |
+| strGetAt(x, y)            | String,<br>x :<br>Natural.<br>y :                                                                              | y <<br>x[y] if<br>½<br>st r Leng th(x),<br>de f<br>=<br>² otherwise.                                                                |  |
 
-> Nesting rules and what’s required inside each block.
+This part of the context appears to be related to the FORMULA programming language, specifically providing information about the structure and grammar of its blocks and keywords.
+The extracted relevant part of the context is:
+
+>>>
+| strJoin(x, y)             | x :<br>String, y :<br>String.                                                                                  | x =<br>y if<br><br>²,<br>de f<br><br>y =<br>=<br>x if<br>²,<br>x y otherwise.<br>                                                |  |
+| strLength(x)              | String.<br>x :                                                                                                 | Returns the length of<br>x.                                                                                                         |  |
+| strLower(x)               | String.<br>x :                                                                                                 | Returns the all-lower-case version<br>of<br>x.                                                                                      |  |
 NO_OUTPUT.
-> The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-> Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-> Nesting rules and what’s required inside each block.
+The extracted relevant part of the context is:
+
+| lstAfter(x, y, z, w)          | is<br>a<br>w-terminated<br>list<br>x<br>type<br>constant<br>#F,<br>z :<br>Natural.                                            | y 6=<br>z ≥<br>y if<br>F();<br>w if<br>l stLeng th(y);<br>a<br>w-terminated<br>F-list of all the ele<br>ments at and after<br>z. |
+| lstBefore(x, y,<br>z, w)      | is<br>a<br>w-terminated<br>list<br>x<br>type<br>constant<br>#F,<br>z :<br>Natural.                                            | y 6=<br>z ≤<br>if<br>F();<br>if<br>0;<br>a<br>w<br>y<br>w<br>terminated<br>F-list of all the elements<br>before<br>z.            |
+The extracted relevant part of the context is:
+
+| lstFind(x, y, z, w)           | x is a list type constant<br>#F.                                                                                              | The first place where<br>z occurs in the<br>F-list<br>y;<br>w if<br>z never occurs.                                              |
+| lstFindAll(x, x', y,<br>z, w) | is<br>a<br>list<br>type<br>constant<br>x<br>0<br>#F,<br>is a<br>w-terminated<br>x<br>natural-list<br>type<br>constant<br>#F'. | 0<br>Returns a<br>w-terminated<br>-list of all<br>F<br>the indices where<br>z occurs in<br>y;<br>w<br>if it never occurs.        |
+| lstFlatten(x, y, w)           | is<br>a<br>w-terminated<br>list<br>x<br>type constant<br>#F.                                                                  | Converts<br>into<br>w-terminated flat<br>y<br>y =<br>form if<br>F();<br>y otherwise.                                             |
+
+These definitions seem to be related to the structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, and `constraint` blocks, as well as grammar keywords like `new`, `ensures`, `no`, `conforms`, and their valid use.
+The extracted relevant part of the context is:
+
+| lstLength(x, y)               | x is a list type<br>constant<br>#F.                                                                                           | y 6=<br>0 if<br>½<br>F(h,t),<br>de f<br>=<br>1+l stLeng th(t).                                                                   |
+| lstReverse(x, y)              | x is a list type<br>constant<br>#F.                                                                                           | y 6<br>y if<br>F(); otherwise reverses the<br>list reusing the same terminator                                                  |
+NO_OUTPUT.
+NO_OUTPUT.
 NO_OUTPUT.

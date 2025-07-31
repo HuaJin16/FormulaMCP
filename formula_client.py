@@ -20,10 +20,17 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.retrievers.document_compressors import LLMChainExtractor
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
+from marker.converters.pdf import PdfConverter
+from marker.settings import settings            
+from marker.models import create_model_dict
+from marker.config.parser import ConfigParser
+from langchain.schema import Document
 
-
-CONTEXT_LIMIT_TOKENS = 35000;   
+CONTEXT_LIMIT_TOKENS = 131072;   
 nest_asyncio.apply()
+
+
+
 
 # state - a way to maintain and track information as the llm flows through the LangGraph system 
 class AgentState(TypedDict):
@@ -34,14 +41,13 @@ class AgentState(TypedDict):
     iterations: int
     latest_model: str
 
-class MCPClient:                                                                                       
+class MCPClient:                                                                                        
     def __init__(self, mcp_server_url="http://127.0.0.1:8000"):
         # initialize ollama
         self.llm = ChatOllama(
             model="llama3.2",
             temperature=0.6,
             streaming=False,
-            #num_ctx =9000
         )
         server_config = {
             "default": {
@@ -67,33 +73,50 @@ class MCPClient:
         else:
             print("[DEBUG] Grammar summary not found — generating from Manual.pdf...")
 
-        loader = PyMuPDFLoader("docs/Manual.pdf")
-        docs = loader.load()
-        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-        chunks = splitter.split_documents(docs)
-
-        llm = ChatOllama(model="llama3.2", temperature=0.3)
-        compressor = LLMChainExtractor.from_llm(llm)
-        compressed_chunks = compressor.compress_documents(
-            chunks, 
-            query=""""
-            Extract a **technical cheat sheet** of the FORMULA programming language.
-            Focus only on:
-                - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
-                - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
-                - Nesting rules and what’s required inside each block.
-            DO NOT include historical background, tooling usage, or example explanations.
-        """
+            # ---- USE MARKER-PDF HERE ----
+            print("[DEBUG] Converting Manual.pdf to Markdown using marker-pdf...")
+                # init converter        
+            config_parser = ConfigParser({"output_format": "markdown"})
+            conv = PdfConverter(
+            config=config_parser.generate_config_dict(),
+            artifact_dict=create_model_dict(),
+            processor_list=config_parser.get_processors(),
+            renderer=config_parser.get_renderer(),
+            llm_service=config_parser.get_llm_service(),
         )
 
-        def escape_curly_braces(text: str) -> str:
-          return text.replace("{", "{{").replace("}", "}}")
+        # run conversion
+            res = conv("docs/Manual.pdf")
+            markdown_output = res.markdown
 
-        grammar_summary = escape_curly_braces(
-             "\n".join([doc.page_content for doc in compressed_chunks])
-        )     
-        with open(summary_path, "w") as f:
-            f.write(grammar_summary)                        
+
+            doc = Document(page_content=markdown_output)
+            splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+            chunks = splitter.split_documents([doc])
+
+            # Compress the chunks with LLM
+            llm = ChatOllama(model="llama3.2", temperature=0.3)
+            compressor = LLMChainExtractor.from_llm(llm)
+            compressed_chunks = compressor.compress_documents(
+                chunks, 
+                query="""
+                Extract a **technical cheat sheet** of the FORMULA programming language.
+                Focus only on:
+                    - The structure of `domain`, `model`, `transform`, `machine`, `rule`, `type`, `constraint` blocks.
+                    - Grammar keywords (like `new`, `ensures`, `no`, `conforms`, `:-`) and their valid use.
+                    - Nesting rules and what’s required inside each block.
+                DO NOT include historical background, tooling usage, or example explanations.
+                """
+            )
+
+            def escape_curly_braces(text: str) -> str:
+                return text.replace("{", "{{").replace("}", "}}")
+
+            grammar_summary = escape_curly_braces(
+                "\n".join([doc.page_content for doc in compressed_chunks])
+            )
+            with open(summary_path, "w") as f:
+                f.write(grammar_summary)                
 
         safe_lexer = load_and_escape_grammar("docs/FormulaLexer.g4")
         safe_parser = load_and_escape_grammar("docs/FormulaParser.g4")     
@@ -241,15 +264,7 @@ class MCPClient:
 
             [YOUR TASK]
             Write a valid FORMULA `.4ml` model that reflects the logic of the user provided C source code and description.
-            Ensure that any errors identified in earlier versions are corrected.
-
-            [FORMULA MODEL REQUIREMENTS]
-            - Start with a `domain` block that defines relevant types, constructs, and constraints
-            - Include a `model` or `partial model` block
-
-            [RESPONSE RULES]
-            - Return only valid FORMULA code
-            - Do not include explanations, comments, markdown, or example code
+       
             """
 
             # creates a prompt template and composes it in a single pipeline with the LLM
